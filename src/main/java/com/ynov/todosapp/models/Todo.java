@@ -34,6 +34,7 @@ public class Todo {
     @Column(name = "is_done")
     private boolean isDone;
 
+    @Column(name = "created_date")
     private LocalDate createdDate;
 
 }
