@@ -7,6 +7,7 @@ import com.ynov.todosapp.services.TodoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 @RestController
@@ -21,7 +22,21 @@ public class TodosController {
 
     @GetMapping("")
     public ResponseEntity<?> retrieveTodos() {
-        return ResponseEntity.ok().body(todoService.getAllTodos());
+        final Iterable<Todo> todos = todoService.getAllTodos();
+        ArrayList<TodoDTO> response = new ArrayList<>();
+
+        for (Todo todo : todos) {
+            response.add(
+                    TodoDTO.builder()
+                            .id(todo.getId())
+                            .title(todo.getTitle())
+                            .description(todo.getDescription())
+                            .status(todo.getStatus().name())
+                            .build()
+            );
+        }
+
+        return ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/{id}")
