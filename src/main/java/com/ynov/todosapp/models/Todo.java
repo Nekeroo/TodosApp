@@ -33,8 +33,8 @@ public class Todo {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "is_done")
-    private StatusEnum isDone;
+    @Column(name = "status")
+    private StatusEnum status;
 
     @Column(name = "created_date")
     private LocalDate createdDate;

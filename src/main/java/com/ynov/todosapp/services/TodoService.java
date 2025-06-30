@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TodoService {
@@ -17,6 +18,10 @@ public class TodoService {
 
     public TodoService(TodoRepository todoRepository) {
         this.todoRepository = todoRepository;
+    }
+
+    public Optional<Todo> getTodoById(Long id) {
+        return todoRepository.findById(id);
     }
 
     public Iterable<Todo> getAllTodos() {
@@ -36,7 +41,7 @@ public class TodoService {
                 .title(input.getTitle())
                 .description(input.getDescription())
                 .createdDate(LocalDate.now())
-                .isDone(StatusEnum.TODO)
+                .status(StatusEnum.TODO)
                 .build();
 
         todoRepository.save(todo);

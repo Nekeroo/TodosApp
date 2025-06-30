@@ -1,12 +1,16 @@
 package com.ynov.todosapp.controllers;
 
+import com.ynov.todosapp.dto.TodoDTO;
 import com.ynov.todosapp.dto.input.TodoInputDTO;
+import com.ynov.todosapp.models.Todo;
 import com.ynov.todosapp.services.TodoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
-@RequestMapping("/api/todos")
+@RequestMapping("/api/todos/")
 public class TodosController {
 
     private final TodoService todoService;
@@ -15,17 +19,35 @@ public class TodosController {
         this.todoService = todoService;
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<?> retrieveTodos() {
         return ResponseEntity.ok().body(todoService.getAllTodos());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> retrieveTodoById(@PathVariable int id) {
-        return null;
+    public ResponseEntity<?> retrieveTodoById(@PathVariable String id) {
+        final Optional<Todo> todo;
+
+        try {
+            todo = todoService.getTodoById(Long.parseLong(id));
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body("Invalid ID format");
+        }
+
+        if (todo.isPresent()) {
+            return ResponseEntity.ok().body(
+                    TodoDTO.builder()
+                            .title(todo.get().getTitle())
+                            .description(todo.get().getDescription())
+                            .status(todo.get().getStatus().name())
+                            .build()
+            );
+        } else {
+            return ResponseEntity.status(404).body("Todo not found");
+        }
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<?> createTodo(@RequestBody TodoInputDTO input) {
         if (input.getTitle() == null || input.getTitle().isEmpty()) {
             return ResponseEntity.badRequest().body("Title cannot be empty");

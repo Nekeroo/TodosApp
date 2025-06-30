@@ -1,5 +1,6 @@
 package com.ynov.todosapp.dto;
 
+import com.ynov.todosapp.enums.StatusEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +14,6 @@ public class TodoDTO {
 
     private String description;
 
-    private boolean isDone;
-
+    private String status;
 
 }
