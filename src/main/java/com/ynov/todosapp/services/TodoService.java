@@ -37,9 +37,14 @@ public class TodoService {
     }
 
     public Todo createTodo(TodoInputDTO input) {
+
+        input.setTitle(input.getTitle().replaceAll("^\\s+|\\s+$", ""));
+
+        String description = (input.getDescription() == null || input.getDescription().isEmpty()) ? "" : input.getDescription();
+
         Todo todo = Todo.builder()
                 .title(input.getTitle())
-                .description(input.getDescription())
+                .description(description)
                 .createdDate(LocalDate.now())
                 .status(StatusEnum.TODO)
                 .build();

@@ -33,7 +33,8 @@ public class TodosController {
                             .id(todo.getId())
                             .title(todo.getTitle())
                             .description(todo.getDescription())
-                            .status(todo.getStatus().name())
+                            .createdDate(todo.getCreatedDate())
+                            .status(todo.getStatus().getLabel())
                             .build()
             );
         }
@@ -57,7 +58,8 @@ public class TodosController {
                             .id(todo.get().getId())
                             .title(todo.get().getTitle())
                             .description(todo.get().getDescription())
-                            .status(todo.get().getStatus().name())
+                            .createdDate(todo.get().getCreatedDate())
+                            .status(todo.get().getStatus().getLabel())
                             .build()
             );
         } else {
@@ -65,14 +67,18 @@ public class TodosController {
         }
     }
 
-    @PostMapping("")
+    @PostMapping("/")
     public ResponseEntity<?> createTodo(@RequestBody TodoInputDTO input) {
-        if (input.getTitle() == null || input.getTitle().isEmpty()) {
-            return ResponseEntity.badRequest().body("Title cannot be empty");
+        if (input.getTitle() == null || input.getTitle().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Title is required");
         }
 
         if (input.getTitle().length() > 100) {
-            return ResponseEntity.badRequest().body("Title is too long");
+            return ResponseEntity.badRequest().body("Title cannot exceed 100 characters");
+        }
+
+        if (input.getDescription() != null && input.getDescription().length() > 500) {
+            return ResponseEntity.badRequest().body("Description cannot exceed 500 characters");
         }
 
         final Todo todo = todoService.createTodo(input);
@@ -81,7 +87,8 @@ public class TodosController {
                         .id(todo.getId())
                         .title(todo.getTitle())
                         .description(todo.getDescription())
-                        .status(todo.getStatus().name())
+                        .createdDate(todo.getCreatedDate())
+                        .status(todo.getStatus().getLabel())
                         .build()
         );
     }
@@ -115,7 +122,8 @@ public class TodosController {
                             .id(todo.getId())
                             .title(todo.getTitle())
                             .description(todo.getDescription())
-                            .status(todo.getStatus().name())
+                            .createdDate(todo.getCreatedDate())
+                            .status(todo.getStatus().getLabel())
                             .build()
             );
         }

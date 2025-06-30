@@ -15,6 +15,14 @@ public enum StatusEnum {
         this.label = label;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
     public static StatusEnum getStatusByString(String label) {
         for (StatusEnum status : StatusEnum.values()) {
             if (status.label.equalsIgnoreCase(label)) {
