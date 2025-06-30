@@ -27,7 +27,16 @@ public class TodosController {
 
     @PostMapping("/")
     public ResponseEntity<?> createTodo(@RequestBody TodoInputDTO input) {
-        return null;
+        if (input.getTitle() == null || input.getTitle().isEmpty()) {
+            return ResponseEntity.badRequest().body("Title cannot be empty");
+        }
+
+        if (input.getTitle().length() > 100) {
+            return ResponseEntity.badRequest().body("Title is too long");
+        }
+
+        todoService.createTodo(input);
+        return ResponseEntity.ok().body("Todo created");
     }
 
     @DeleteMapping("/{id}")

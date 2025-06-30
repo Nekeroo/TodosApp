@@ -1,9 +1,12 @@
 package com.ynov.todosapp.services;
 
+import com.ynov.todosapp.dto.input.TodoInputDTO;
+import com.ynov.todosapp.enums.StatusEnum;
 import com.ynov.todosapp.models.Todo;
 import com.ynov.todosapp.repositories.TodoRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,5 +29,16 @@ public class TodoService {
             todos.add(todo);
         }
         return todos;
+    }
+
+    public void createTodo(TodoInputDTO input) {
+        Todo todo = Todo.builder()
+                .title(input.getTitle())
+                .description(input.getDescription())
+                .createdDate(LocalDate.now())
+                .isDone(StatusEnum.TODO)
+                .build();
+
+        todoRepository.save(todo);
     }
 }
