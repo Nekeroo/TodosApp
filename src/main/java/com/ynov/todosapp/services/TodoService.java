@@ -36,7 +36,7 @@ public class TodoService {
         return todos;
     }
 
-    public void createTodo(TodoInputDTO input) {
+    public Todo createTodo(TodoInputDTO input) {
         Todo todo = Todo.builder()
                 .title(input.getTitle())
                 .description(input.getDescription())
@@ -45,6 +45,7 @@ public class TodoService {
                 .build();
 
         todoRepository.save(todo);
+        return todo;
     }
 
     public void deleteTodoById(Long id) {

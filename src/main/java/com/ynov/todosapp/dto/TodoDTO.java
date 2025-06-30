@@ -10,6 +10,8 @@ import lombok.Setter;
 @Setter
 public class TodoDTO {
 
+    private Long id;
+
     private String title;
 
     private String description;

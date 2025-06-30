@@ -37,6 +37,7 @@ public class TodosController {
         if (todo.isPresent()) {
             return ResponseEntity.ok().body(
                     TodoDTO.builder()
+                            .id(todo.get().getId())
                             .title(todo.get().getTitle())
                             .description(todo.get().getDescription())
                             .status(todo.get().getStatus().name())
@@ -57,8 +58,15 @@ public class TodosController {
             return ResponseEntity.badRequest().body("Title is too long");
         }
 
-        todoService.createTodo(input);
-        return ResponseEntity.ok().body("Todo created");
+        final Todo todo = todoService.createTodo(input);
+        return ResponseEntity.ok().body(
+                TodoDTO.builder()
+                        .id(todo.getId())
+                        .title(todo.getTitle())
+                        .description(todo.getDescription())
+                        .status(todo.getStatus().name())
+                        .build()
+        );
     }
 
     @DeleteMapping("/{id}")
