@@ -43,38 +43,6 @@
 - **ÉTANT DONNÉ QUE** je tente de modifier des champs non modifiables (ID, date de création, statut), **LORSQUE** je soumets ces modifications, **ALORS** ces champs sont ignorés et seuls titre/description sont pris en compte
 
 > Attention, à bien factoriser votre code, certaines vérifications ont déjà été faites lors de la création de la tâche. Évitez de les redonder, mais assurez-vous de tester l'ensemble des cas.
-US004 - Changer le statut d'une tâche
-**En tant qu'** utilisateur,  
-**Je veux** faire évoluer le statut d'une tâche (TODO → ONGOING → DONE),  
-**Afin de** suivre l'avancement de mes activités.
-
-**Critères d'acceptation :**
-- **ÉTANT DONNÉ QUE** j'ai une tâche existante, **LORSQUE** je change son statut vers "TODO", "ONGOING" ou "DONE", **ALORS** le statut est mis à jour avec succès
-- **ÉTANT DONNÉ QUE** je tente de changer le statut d'une tâche vers une valeur invalide, **LORSQUE** je soumets le changement, **ALORS** j'obtiens une erreur "Invalid status. Allowed values: TODO, ONGOING, DONE"
-- **ÉTANT DONNÉ QUE** je tente de changer le statut d'une tâche inexistante, **LORSQUE** j'utilise un ID invalide, **ALORS** j'obtiens une erreur "Task not found"
-  US005 - Supprimer une tâche
-  **En tant qu'** utilisateur,  
-  **Je veux** supprimer définitivement une tâche,  
-  **Afin de** nettoyer ma liste des tâches devenues inutiles.
-
-**Critères d'acceptation :**
-- **ÉTANT DONNÉ QUE** j'ai une tâche existante, **LORSQUE** je la supprime, **ALORS** elle n'apparaît plus dans la liste des tâches
-- **ÉTANT DONNÉ QUE** j'ai supprimé une tâche, **LORSQUE** je tente de la consulter, de la supprimer, de la modifier ou de change son status par son ID, **ALORS** j'obtiens une erreur "Task not found"
-  User Stories : Phase 2 - Organisation et recherche
-  US007 - Rechercher des tâches
-  **En tant qu'** utilisateur,  
-  **Je veux** rechercher mes tâches par mots-clés dans le titre ou la description,  
-  **Afin de** retrouver rapidement une tâche spécifique.
-
-**Critères d'acceptation :**
-- **ÉTANT DONNÉ QUE** j'ai des tâches contenant un mot-clé dans le titre, **LORSQUE** je recherche ce terme, **ALORS** seules les tâches correspondantes sont retournées
-- **ÉTANT DONNÉ QUE** j'ai des tâches contenant un mot-clé dans la description, **LORSQUE** je recherche ce terme, **ALORS** seules les tâches correspondantes sont retournées
-- **ÉTANT DONNÉ QUE** j'ai des tâches contenant un mot-clé dans le titre ET la description, **LORSQUE** je recherche ce terme, **ALORS** toutes ces tâches sont retournées (sans doublon)
-- **ÉTANT DONNÉ QUE** je recherche un terme inexistant, **LORSQUE** j'exécute la recherche, **ALORS** j'obtiens une liste vide
-- **ÉTANT DONNÉ QUE** je recherche avec une chaîne vide, **LORSQUE** j'exécute la recherche, **ALORS** toutes les tâches sont retournées
-- **ÉTANT DONNÉ QUE** je recherche avec des majuscules/minuscules, **LORSQUE** j'exécute la recherche, **ALORS** la recherche est insensible à la casse
-- **ÉTANT DONNÉ QUE** j'ai de nombreux résultats de recherche, **LORSQUE** je fais la recherche, **ALORS** les résultats sont paginés comme la liste normale
-  User Stories : Phase 3 - Gestion des utilisateurs
 
 ## Story 4
 
