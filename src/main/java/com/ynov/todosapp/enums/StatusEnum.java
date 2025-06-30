@@ -21,6 +21,7 @@ public enum StatusEnum {
                 return status;
             }
         }
-        throw new IllegalArgumentException("No enum constant with label " + label);
+
+        return null;
     }
 }

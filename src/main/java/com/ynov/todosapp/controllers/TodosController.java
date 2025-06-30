@@ -2,6 +2,8 @@ package com.ynov.todosapp.controllers;
 
 import com.ynov.todosapp.dto.TodoDTO;
 import com.ynov.todosapp.dto.input.TodoInputDTO;
+import com.ynov.todosapp.dto.input.TodoInputStatusDTO;
+import com.ynov.todosapp.enums.StatusEnum;
 import com.ynov.todosapp.models.Todo;
 import com.ynov.todosapp.services.TodoService;
 import org.springframework.http.ResponseEntity;
@@ -95,9 +97,28 @@ public class TodosController {
         return null;
     }
 
-    @PutMapping("/statut/{id}")
-    public ResponseEntity<?> updateStatus(@PathVariable Long id) {
-        return null;
+    @PutMapping("/status/{id}")
+    public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestBody TodoInputStatusDTO input) {
+        final StatusEnum status = StatusEnum.getStatusByString(input.getStatus());
+
+        if (status == null) {
+            return ResponseEntity.badRequest().body("Invalid status. Allowed values: TODO, ONGOING, DONE");
+        }
+
+        final Todo todo = todoService.updateTodoStatus(id, status);
+
+        if (todo == null) {
+            return ResponseEntity.status(404).body("Task not found");
+        } else {
+            return ResponseEntity.ok().body(
+                    TodoDTO.builder()
+                            .id(todo.getId())
+                            .title(todo.getTitle())
+                            .description(todo.getDescription())
+                            .status(todo.getStatus().name())
+                            .build()
+            );
+        }
     }
 
 }

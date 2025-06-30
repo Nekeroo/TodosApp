@@ -51,4 +51,16 @@ public class TodoService {
     public void deleteTodoById(Long id) {
         todoRepository.deleteById(id);
     }
+
+    public Todo updateTodoStatus(Long id, StatusEnum status) {
+        final Optional<Todo> todo = todoRepository.findById(id);
+
+        if (todo.isEmpty()) {
+            return null;
+        } else {
+            todo.get().setStatus(status);
+            todoRepository.save(todo.get());
+            return todo.get();
+        }
+    }
 }
