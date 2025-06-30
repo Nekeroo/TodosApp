@@ -63,7 +63,7 @@ public class TodosController {
                             .build()
             );
         } else {
-            return ResponseEntity.status(404).body("Todo not found");
+            return ResponseEntity.status(404).body("Task not found");
         }
     }
 

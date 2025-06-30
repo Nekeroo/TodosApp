@@ -2,6 +2,7 @@ package com.ynov.todosapp.controllers;
 
 import com.ynov.todosapp.dto.TodoDTO;
 import com.ynov.todosapp.dto.input.TodoInputDTO;
+import com.ynov.todosapp.dto.input.TodoInputStatusDTO;
 import com.ynov.todosapp.enums.StatusEnum;
 import com.ynov.todosapp.models.Todo;
 import com.ynov.todosapp.repositories.TodoRepository;
@@ -10,9 +11,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
@@ -21,17 +23,18 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class TodoControllerTest {
 
-    @Autowired
-    private TodoService service;
-
-    @MockBean
+    @Mock
     private TodoRepository repository;
+
+    @InjectMocks
+    private TodoService service;
 
     private LocalDate creationDate;
 
@@ -40,20 +43,34 @@ class TodoControllerTest {
 
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.openMocks(this);
         controller = new TodosController(service);
         savedTodos = new ArrayList<>();
 
+        creationDate = LocalDate.now();
 
+        Todo existingTodo = Todo.builder()
+                .id(1L)
+                .title("Todo Title")
+                .description("Todo Description")
+                .status(StatusEnum.TODO)
+                .createdDate(creationDate)
+                .build();
+
+        savedTodos.add(existingTodo);
+
+        when(service.getTodoById(1L)).thenReturn(Optional.of(existingTodo));
+
+        when(repository.findAll()).thenReturn(savedTodos);
+
+        when(repository.findById(1L)).thenReturn(Optional.of(existingTodo));
+
+        // save just returns the entity passed in
         when(repository.save(any(Todo.class))).thenAnswer(invocation -> {
             Todo entity = invocation.getArgument(0, Todo.class);
-
-            entity.setId(savedTodos.size() + 1);
-            creationDate = LocalDate.now();
-            entity.setCreatedDate(creationDate);
-
-            savedTodos.add(entity);
             return entity;
         });
+
     }
 
     @Nested
@@ -193,21 +210,6 @@ class TodoControllerTest {
     @DisplayName("Récupération d'une TODO")
     class GetOneTodo {
 
-        @BeforeEach
-        void setUp() {
-            creationDate = LocalDate.now();
-
-            savedTodos.add(Todo.builder()
-                    .id(1)
-                    .title("Todo Title")
-                    .description("Todo Description")
-                    .createdDate(creationDate)
-                    .status(StatusEnum.TODO)
-                    .build());
-
-            when(service.getTodoById(anyLong())).thenReturn(Optional.ofNullable(savedTodos.getFirst()));
-        }
-
         @DisplayName("ÉTANT DONNÉ QUE j'ai une tâche existante avec ID valide, LORSQUE je consulte cette tâche, ALORS j'obtiens tous ses détails : ID, titre, description, statut, date de création, etc..")
         @Test
         void testGetOneTodo() {
@@ -237,7 +239,7 @@ class TodoControllerTest {
             assertTrue(repsonse.getStatusCode().is4xxClientError());
             String body = (String) repsonse.getBody();
 
-            assertEquals("Todo not found", body);
+            assertEquals("Task not found", body);
         }
 
         @DisplayName("ÉTANT DONNÉ QUE je consulte une tâche avec un ID au mauvais format, LORSQUE je fais la demande, ALORS j'obtiens une erreur \"Invalid ID format\"\n")
@@ -257,20 +259,6 @@ class TodoControllerTest {
     @Nested
     @DisplayName("Modification d'une TODO")
     class UpdateOneTodo {
-        @BeforeEach
-        void setUp() {
-            creationDate = LocalDate.now();
-
-            savedTodos.add(Todo.builder()
-                    .id(1)
-                    .title("Todo Title")
-                    .description("Todo Description")
-                    .createdDate(creationDate)
-                    .status(StatusEnum.TODO)
-                    .build());
-
-            when(repository.findById(anyLong())).thenReturn(Optional.ofNullable(savedTodos.getFirst()));
-        }
 
         @DisplayName("ÉTANT DONNÉ QUE j'ai une tâche existante, LORSQUE je modifie son titre avec une valeur valide, ALORS le nouveau titre est sauvegardé et les autres champs restent inchangés\n")
         @Test
@@ -308,13 +296,186 @@ class TodoControllerTest {
             assertNotNull(todoDTO);
             assertSame(inputDTO.getDescription(), todoDTO.getDescription());
         }
+
+        @DisplayName("ÉTANT DONNÉ QUE je tente de modifier le titre d'une tâche avec une valeur vide, LORSQUE je soumets la modification, ALORS j'obtiens une erreur \"Title is required\"\n")
+        @Test
+        void testUpdateOneTodoWithEmptyTitle() {
+            TodoInputDTO inputDTO = TodoInputDTO.builder()
+                    .build();
+
+            ResponseEntity<?> response = controller.updateTodo(1L, inputDTO);
+
+            assertTrue(response.getStatusCode().is4xxClientError());
+
+            String body = (String) response.getBody();
+
+            assertEquals("Title is required", body);
+        }
+
+        @DisplayName("ÉTANT DONNÉ QUE je tente de modifier une tâche avec un titre de plus de 100 caractères, LORSQUE je soumets, ALORS j'obtiens une erreur 'Title cannot exceed 100 characters'")
+        @Test
+        void testUpdateOneTodoWithTitleOver100Caracters() {
+            TodoInputDTO inputDTO = TodoInputDTO.builder()
+                    .title("e".repeat(101))
+                    .build();
+
+            ResponseEntity<?> response = controller.updateTodo(1L, inputDTO);
+
+            assertTrue(response.getStatusCode().is4xxClientError());
+
+            String body = (String) response.getBody();
+
+            assertEquals("Title cannot exceed 100 characters", body);
+        }
+
+        @DisplayName("ÉTANT DONNÉ QUE je tente de modifier une tâche avec une description de plus de 500 caractères, LORSQUE je soumets, ALORS j'obtiens une erreur \"Description cannot exceed 500 characters\"\n")
+        @Test
+        void testUpdateOneTodoWithDescriptionOver500Caracters() {
+            TodoInputDTO inputDTO = TodoInputDTO.builder()
+                    .title("validTitle")
+                    .description("e".repeat(501))
+                    .build();
+
+            ResponseEntity<?> response = controller.updateTodo(1L, inputDTO);
+
+            assertTrue(response.getStatusCode().is4xxClientError());
+
+            String body = (String) response.getBody();
+
+            assertEquals("Description cannot exceed 500 characters", body);
+        }
+
+        @DisplayName("ÉTANT DONNÉ QUE je tente de modifier une tâche inexistante, LORSQUE j'utilise un ID invalide, ALORS j'obtiens une erreur \"Task not found\"\n")
+        @Test
+        void testUpdateOneTodoWithIdNotFound() {
+            when(service.getTodoById(1L)).thenReturn(Optional.empty());
+
+            TodoInputDTO inputDTO = TodoInputDTO.builder()
+                    .title("validTitle")
+                    .description("Description updated")
+                    .build();
+
+            ResponseEntity<?> response = controller.updateTodo(1L, inputDTO);
+
+            assertTrue(response.getStatusCode().is4xxClientError());
+
+            String body = (String) response.getBody();
+
+            assertEquals("Task not found", body);
+        }
+
+        @DisplayName("ÉTANT DONNÉ QUE je tente de modifier une tâche inexistante, LORSQUE j'utilise un ID invalide, ALORS j'obtiens une erreur \"Task not found\"\n")
+        @Test
+        void testUpdateOneTodoWithFieldsNotUpdatable() {
+            when(service.getTodoById(1L)).thenReturn(Optional.empty());
+
+            TodoInputDTO inputDTO = TodoInputDTO.builder()
+                    .title("validTitle")
+                    .description("Different description")
+                    .build();
+
+            ResponseEntity<?> response = controller.updateTodo(1L, inputDTO);
+
+            assertTrue(response.getStatusCode().is4xxClientError());
+
+            String body = (String) response.getBody();
+
+            assertEquals("Task not found", body);
+        }
+
     }
 
     @Nested
-    @DisplayName("Update status one TODO")
+    @DisplayName("Mise à jour du statut d'une TODO")
     class UpdateStatusOneTodo {
 
+        @DisplayName("ÉTANT DONNÉ QUE j'ai une tâche existante, LORSQUE je change son statut vers \"TODO\", \"ONGOING\" ou \"DONE\", ALORS le statut est mis à jour avec succès\n")
+        @Test
+        void testUpdateStatusWithValidTodo() {
+            TodoInputStatusDTO todoInputStatusDTO = TodoInputStatusDTO.builder()
+                    .status(StatusEnum.IN_PROGRESS.getLabel())
+                    .build();
 
+            ResponseEntity<?> response = controller.updateStatus(1L, todoInputStatusDTO);
+
+            assertTrue(response.getStatusCode().is2xxSuccessful());
+
+            TodoDTO todoDTO = (TodoDTO) response.getBody();
+
+            assertNotNull(todoDTO);
+            assertEquals(StatusEnum.IN_PROGRESS.getLabel(), todoDTO.getStatus());
+        }
+
+        @DisplayName("ÉTANT DONNÉ QUE je tente de changer le statut d'une tâche vers une valeur invalide, LORSQUE je soumets le changement, ALORS j'obtiens une erreur \"Invalid status. Allowed values: TODO, ONGOING, DONE\"\n")
+        @Test
+        void testUpdateStatusTodoWithInvalidValue() {
+            TodoInputStatusDTO todoInputStatusDTO = TodoInputStatusDTO.builder()
+                    .status("INVALID_STATUS")
+                    .build();
+
+            ResponseEntity<?> response = controller.updateStatus(1L, todoInputStatusDTO);
+
+            assertTrue(response.getStatusCode().is4xxClientError());
+
+            String erreur = (String) response.getBody();
+
+            assertNotNull(erreur);
+            assertEquals("Invalid status. Allowed values: TODO, ONGOING, DONE", erreur);
+        }
+
+        @DisplayName("ÉTANT DONNÉ QUE je tente de changer le statut d'une tâche inexistante, LORSQUE j'utilise un ID invalide, ALORS j'obtiens une erreur \"Task not found\"\n")
+        @Test
+        void testUpdateStatusTodoWithInvalidID() {
+            TodoInputStatusDTO todoInputStatusDTO = TodoInputStatusDTO.builder()
+                    .status(StatusEnum.DONE.getLabel())
+                    .build();
+
+            when(service.getTodoById(1L)).thenReturn(Optional.empty());
+
+            ResponseEntity<?> response = controller.updateStatus(1L, todoInputStatusDTO);
+
+            assertTrue(response.getStatusCode().is4xxClientError());
+
+            String erreur = (String) response.getBody();
+
+            assertNotNull(erreur);
+            assertEquals("Task not found", erreur);
+        }
     }
 
+    @Nested
+    @DisplayName("Suppression d'une TODO")
+    class DeleteOneTodo {
+
+        @DisplayName("ÉTANT DONNÉ QUE j'ai une tâche existante, LORSQUE je la supprime, ALORS elle n'apparaît plus dans la liste des tâches\n")
+        @Test
+        void testDeleteOneTodoWithValidId() {
+            ResponseEntity<?> response = controller.deleteTodo(1L);
+
+            assertTrue(response.getStatusCode().is2xxSuccessful());
+
+            when(repository.findAll()).thenReturn(savedTodos);
+
+            ResponseEntity<?> responseGet = controller.retrieveTodos();
+
+            List<TodoDTO> todos = (List<TodoDTO>) responseGet.getBody();
+
+            assertTrue(todos.isEmpty());
+        }
+
+        @DisplayName("ÉTANT DONNÉ QUE j'ai supprimé une tâche, LORSQUE je tente de la consulter, de la supprimer, de la modifier ou de change son status par son ID, ALORS j'obtiens une erreur \"Task not found\"\n")
+        @Test
+        void testDeleteOneTodoWithInvalidId() {
+            when(service.getTodoById(anyLong())).thenReturn(Optional.empty());
+
+            ResponseEntity<?> responseGet = controller.retrieveTodoById("1");
+
+            assertTrue(responseGet.getStatusCode().is4xxClientError());
+
+            String body = (String) responseGet.getBody();
+
+            assertEquals("Task not found", body);
+        }
+
+    }
 }
