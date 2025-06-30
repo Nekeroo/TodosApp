@@ -18,9 +18,10 @@ import org.springframework.http.ResponseEntity;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -36,6 +37,7 @@ class TodoControllerTest {
 
     private TodosController controller;
     private List<Todo> savedTodos;
+
     @BeforeEach
     void setUp() {
         controller = new TodosController(service);
@@ -56,8 +58,8 @@ class TodoControllerTest {
 
     @Nested
     @DisplayName("Création d'une TODO")
-
     class CreateTodo {
+
         @DisplayName("ÉTANT DONNÉ QUE je fournis un titre valide (non vide, maximum 100 caractères), LORSQUE je crée une tâche, ALORS elle est créée avec un ID unique, le titre fourni, une description vide par défaut, une date de création et le statut \"TODO\"")
         @Test
         void testCreateTodoWithValidTitleAndEmptyDescription() {
@@ -185,6 +187,134 @@ class TodoControllerTest {
             assertNotNull(todo);
             assertEquals(creationDate, todo.getCreatedDate());
         }
+    }
+
+    @Nested
+    @DisplayName("Récupération d'une TODO")
+    class GetOneTodo {
+
+        @BeforeEach
+        void setUp() {
+            creationDate = LocalDate.now();
+
+            savedTodos.add(Todo.builder()
+                    .id(1)
+                    .title("Todo Title")
+                    .description("Todo Description")
+                    .createdDate(creationDate)
+                    .status(StatusEnum.TODO)
+                    .build());
+
+            when(service.getTodoById(anyLong())).thenReturn(Optional.ofNullable(savedTodos.getFirst()));
+        }
+
+        @DisplayName("ÉTANT DONNÉ QUE j'ai une tâche existante avec ID valide, LORSQUE je consulte cette tâche, ALORS j'obtiens tous ses détails : ID, titre, description, statut, date de création, etc..")
+        @Test
+        void testGetOneTodo() {
+
+            ResponseEntity<?> repsonse = controller.retrieveTodoById("1");
+
+            assertTrue(repsonse.getStatusCode().is2xxSuccessful());
+
+            TodoDTO todoDTO = (TodoDTO) repsonse.getBody();
+            assertNotNull(todoDTO);
+            assertNotNull(todoDTO.getId());
+            assertNotNull(todoDTO.getTitle());
+            assertNotNull(todoDTO.getDescription());
+            assertNotNull(todoDTO.getCreatedDate());
+            assertNotNull(todoDTO.getStatus());
+
+        }
+
+        @DisplayName("ÉTANT DONNÉ QUE je consulte une tâche avec un ID inexistant, LORSQUE je fais la demande, ALORS j'obtiens une erreur \"Task not found\" avec, si web, le code 404\n")
+        @Test
+        void testGetOneTodoNotFound() {
+
+            when(service.getTodoById(1L)).thenReturn(Optional.empty());
+
+            ResponseEntity<?> repsonse = controller.retrieveTodoById("1");
+
+            assertTrue(repsonse.getStatusCode().is4xxClientError());
+            String body = (String) repsonse.getBody();
+
+            assertEquals("Todo not found", body);
+        }
+
+        @DisplayName("ÉTANT DONNÉ QUE je consulte une tâche avec un ID au mauvais format, LORSQUE je fais la demande, ALORS j'obtiens une erreur \"Invalid ID format\"\n")
+        @Test
+        void testGetOneTodoWithIdWithIncorrectFormat() {
+            ResponseEntity<?> repsonse = controller.retrieveTodoById("azerty");
+
+            assertTrue(repsonse.getStatusCode().is4xxClientError());
+
+            String body = (String) repsonse.getBody();
+
+            assertEquals("Invalid ID format", body);
+        }
+
+    }
+
+    @Nested
+    @DisplayName("Modification d'une TODO")
+    class UpdateOneTodo {
+        @BeforeEach
+        void setUp() {
+            creationDate = LocalDate.now();
+
+            savedTodos.add(Todo.builder()
+                    .id(1)
+                    .title("Todo Title")
+                    .description("Todo Description")
+                    .createdDate(creationDate)
+                    .status(StatusEnum.TODO)
+                    .build());
+
+            when(repository.findById(anyLong())).thenReturn(Optional.ofNullable(savedTodos.getFirst()));
+        }
+
+        @DisplayName("ÉTANT DONNÉ QUE j'ai une tâche existante, LORSQUE je modifie son titre avec une valeur valide, ALORS le nouveau titre est sauvegardé et les autres champs restent inchangés\n")
+        @Test
+        void testUpdateOneTodo() {
+
+            TodoInputDTO inputDTO = TodoInputDTO.builder()
+                    .title("Todo title different")
+                    .build();
+
+            ResponseEntity<?> response = controller.updateTodo(1L, inputDTO);
+
+            assertTrue(response.getStatusCode().is2xxSuccessful());
+
+            TodoDTO todoDTO = (TodoDTO) response.getBody();
+
+            assertNotNull(todoDTO);
+            assertSame(inputDTO.getTitle(), todoDTO.getTitle());
+        }
+
+        @DisplayName("ÉTANT DONNÉ QUE j'ai une tâche existante, LORSQUE je modifie sa description avec une valeur valide, ALORS la nouvelle description est sauvegardée et les autres champs restent inchangés\n")
+        @Test
+        void testUpdateOneTodoWithDescription() {
+
+            TodoInputDTO inputDTO = TodoInputDTO.builder()
+                    .title("Toto title")
+                    .description("Todo description different")
+                    .build();
+
+            ResponseEntity<?> response = controller.updateTodo(1L, inputDTO);
+
+            assertTrue(response.getStatusCode().is2xxSuccessful());
+
+            TodoDTO todoDTO = (TodoDTO) response.getBody();
+
+            assertNotNull(todoDTO);
+            assertSame(inputDTO.getDescription(), todoDTO.getDescription());
+        }
+    }
+
+    @Nested
+    @DisplayName("Update status one TODO")
+    class UpdateStatusOneTodo {
+
+
     }
 
 }

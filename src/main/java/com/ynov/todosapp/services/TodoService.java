@@ -60,6 +60,8 @@ public class TodoService {
     public Todo updateTodo(Long id, TodoInputDTO input) {
         final Optional<Todo> todo = todoRepository.findById(id);
 
+        input.setTitle(input.getTitle().replaceAll("^\\s+|\\s+$", ""));
+
         if (todo.isEmpty()) {
             return null;
         } else {
