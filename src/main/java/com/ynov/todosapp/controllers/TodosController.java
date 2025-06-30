@@ -63,7 +63,8 @@ public class TodosController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteTodo(@PathVariable Long id) {
-        return null;
+        todoService.deleteTodoById(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
