@@ -101,7 +101,37 @@ public class TodosController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateTodo(@PathVariable Long id, @RequestBody TodoInputDTO input) {
-        return null;
+        if (input.getTitle() == null || input.getTitle().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Title is required");
+        }
+
+        if (input.getTitle().trim().length() > 100) {
+            return ResponseEntity.badRequest().body("Title cannot exceed 100 characters");
+        }
+
+        if (input.getDescription() == null) {
+            input.setDescription("");
+        }
+
+        if (input.getDescription().trim().length() > 500) {
+            return ResponseEntity.badRequest().body("Description cannot exceed 500 characters");
+        }
+
+        final Todo todo = todoService.updateTodo(id, input);
+
+        if (todo != null) {
+            return ResponseEntity.ok().body(
+                    TodoDTO.builder()
+                            .id(todo.getId())
+                            .title(todo.getTitle())
+                            .createdDate(todo.getCreatedDate())
+                            .description(todo.getDescription())
+                            .status(todo.getStatus().getLabel())
+                            .build()
+            );
+        }
+
+        return ResponseEntity.status(404).body("Task not found");
     }
 
     @PutMapping("/status/{id}")
