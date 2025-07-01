@@ -43,10 +43,6 @@ public class TodosController {
 
     @PostMapping("/")
     public ResponseEntity<?> createTodo(@RequestBody TodoInputDTO input) {
-        if (input.getDescription() == null) {
-            input.setDescription("");
-        }
-
         TodoValidator.validateTitle(input.getTitle());
         TodoValidator.validateDescription(input.getDescription());
 

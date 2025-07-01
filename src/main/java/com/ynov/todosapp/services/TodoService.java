@@ -34,6 +34,7 @@ public class TodoService {
         input.setTitle(input.getTitle().replaceAll("^\\s+|\\s+$", ""));
 
         String description = (input.getDescription() == null || input.getDescription().isEmpty()) ? "" : input.getDescription();
+        input.setDescription(description);
         Todo todo = TodoMapper.todoInputDTOToTodo(input, LocalDate.now(), StatusEnum.TODO);
 
         todoRepository.save(todo);
@@ -45,8 +46,7 @@ public class TodoService {
     }
 
     public Todo updateTodo(Long id, TodoInputDTO input) {
-        Todo todo = todoRepository.findById(id)
-                .orElseThrow(TaskNotFound::new);
+        Todo todo = getTodoById(id);
 
         input.setTitle(input.getTitle().replaceAll("^\\s+|\\s+$", ""));
 
@@ -57,8 +57,7 @@ public class TodoService {
     }
 
     public Todo updateTodoStatus(Long id, StatusEnum status) {
-        final Todo todo = todoRepository.findById(id)
-                .orElseThrow(TaskNotFound::new);
+        final Todo todo = getTodoById(id);
 
         todo.setStatus(status);
         todoRepository.save(todo);
