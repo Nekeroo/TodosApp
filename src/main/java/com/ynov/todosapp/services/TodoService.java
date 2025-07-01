@@ -26,8 +26,10 @@ public class TodoService {
                 .orElseThrow(TaskNotFound::new);
     }
 
-    public Page<Todo> getAllTodos(int page) {
-        return todoRepository.findAll(PageRequest.of(page, 10));
+    public Page<Todo> getAllTodos(int page, String query) {
+        return todoRepository.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+                query, query, PageRequest.of(page, 10)
+        );
     }
 
     public Todo createTodo(TodoInputDTO input) {
