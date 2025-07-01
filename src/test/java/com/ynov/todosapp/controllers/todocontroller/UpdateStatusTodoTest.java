@@ -1,32 +1,19 @@
 package com.ynov.todosapp.controllers.todocontroller;
 
 import com.ynov.todosapp.controllers.TodoControllerTest;
-import com.ynov.todosapp.controllers.TodosController;
 import com.ynov.todosapp.dto.TodoDTO;
 import com.ynov.todosapp.dto.input.TodoInputStatusDTO;
 import com.ynov.todosapp.enums.StatusEnum;
-import com.ynov.todosapp.models.Todo;
-import com.ynov.todosapp.repositories.TodoRepository;
-import com.ynov.todosapp.services.TodoService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
 public class UpdateStatusTodoTest extends TodoControllerTest {
 
 
@@ -71,7 +58,7 @@ public class UpdateStatusTodoTest extends TodoControllerTest {
                 .status(StatusEnum.DONE.getLabel())
                 .build();
 
-        when(service.getTodoById(1L)).thenReturn(Optional.empty());
+        when(service.updateTodoStatus(eq(1L), any(StatusEnum.class))).thenReturn(null);
 
         ResponseEntity<?> response = controller.updateStatus(1L, todoInputStatusDTO);
 

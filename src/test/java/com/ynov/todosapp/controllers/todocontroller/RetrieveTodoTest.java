@@ -25,12 +25,20 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
 public class RetrieveTodoTest extends TodoControllerTest {
+
 
     @DisplayName("ÉTANT DONNÉ QUE j'ai une tâche existante avec ID valide, LORSQUE je consulte cette tâche, ALORS j'obtiens tous ses détails : ID, titre, description, statut, date de création, etc..")
     @Test
     void testGetOneTodo() {
+
+        Todo compareTodo = Todo.builder()
+                .id(1L)
+                .title("Todo Title")
+                .description("Todo Description")
+                .status(StatusEnum.TODO)
+                .createdDate(creationDate)
+                .build();
 
         ResponseEntity<?> repsonse = controller.retrieveTodoById("1");
 
@@ -38,12 +46,12 @@ public class RetrieveTodoTest extends TodoControllerTest {
 
         TodoDTO todoDTO = (TodoDTO) repsonse.getBody();
         assertNotNull(todoDTO);
-        assertNotNull(todoDTO.getId());
-        assertNotNull(todoDTO.getTitle());
-        assertNotNull(todoDTO.getDescription());
-        assertNotNull(todoDTO.getCreatedDate());
-        assertNotNull(todoDTO.getStatus());
-
+        assertAll(() -> {
+            assertEquals(compareTodo.getTitle(), todoDTO.getTitle());
+            assertEquals(compareTodo.getDescription(), todoDTO.getDescription());
+            assertEquals(compareTodo.getCreatedDate(), todoDTO.getCreatedDate());
+            assertEquals(compareTodo.getStatus().getLabel(), todoDTO.getStatus());
+        });
     }
 
     @DisplayName("ÉTANT DONNÉ QUE je consulte une tâche avec un ID inexistant, LORSQUE je fais la demande, ALORS j'obtiens une erreur \"Task not found\" avec, si web, le code 404\n")
@@ -71,5 +79,4 @@ public class RetrieveTodoTest extends TodoControllerTest {
 
         assertEquals("Invalid ID format", body);
     }
-
 }
