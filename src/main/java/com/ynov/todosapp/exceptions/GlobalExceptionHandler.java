@@ -35,4 +35,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleInvalidStatus() {
         return ResponseEntity.badRequest().body("Invalid status. Allowed values: TODO, ONGOING, DONE");
     }
+
+    @ExceptionHandler(InvalidPageSize.class)
+    public ResponseEntity<String> handleInvalidPageSize() {
+        return ResponseEntity.badRequest().body("Invalid page size");
+    }
+
+    @ExceptionHandler(InvalidFilterStatus.class)
+    public ResponseEntity<String> handleInvalidFilterStatus() {
+        return ResponseEntity.badRequest().body("Invalid filter status");
+    }
 }

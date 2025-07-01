@@ -12,6 +12,7 @@ import com.ynov.todosapp.mapper.TodoMapper;
 import com.ynov.todosapp.models.Todo;
 import com.ynov.todosapp.services.TodoService;
 import com.ynov.todosapp.utils.TodoValidator;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,12 +27,18 @@ public class TodosController {
     }
 
     @GetMapping("")
-    public ResponseEntity<TodosPaginedDTO> retrieveTodos(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size, @RequestParam(defaultValue = "") String query) {
+    public ResponseEntity<TodosPaginedDTO> retrieveTodos(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "") String query,
+            @RequestParam(defaultValue = "") String status
+    ) {
         if (size <= 0) {
             throw new InvalidPageSize();
         }
 
-        TodosPaginedDTO todos = TodoMapper.todoPageToDTO(todoService.getAllTodos(page, size, query));
+        final Page<Todo> todoPage = todoService.getAllTodos(page, size, query, status);
+        TodosPaginedDTO todos = TodoMapper.todoPageToDTO(todoPage == null ? Page.empty() : todoPage);
         return ResponseEntity.ok().body(todos);
     }
 

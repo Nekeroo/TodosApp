@@ -2,6 +2,7 @@ package com.ynov.todosapp.services;
 
 import com.ynov.todosapp.dto.input.TodoInputDTO;
 import com.ynov.todosapp.enums.StatusEnum;
+import com.ynov.todosapp.exceptions.InvalidFilterStatus;
 import com.ynov.todosapp.exceptions.TaskNotFound;
 import com.ynov.todosapp.mapper.TodoMapper;
 import com.ynov.todosapp.models.Todo;
@@ -26,10 +27,24 @@ public class TodoService {
                 .orElseThrow(TaskNotFound::new);
     }
 
-    public Page<Todo> getAllTodos(int page, int size, String query) {
-        return todoRepository.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                query, query, PageRequest.of(page, size)
-        );
+    public Page<Todo> getAllTodos(int page, int size, String query, String statusString) {
+        StatusEnum status = StatusEnum.getStatusByString(statusString);
+
+        if (!statusString.isEmpty() && status == null) {
+            throw new InvalidFilterStatus();
+        }
+
+        if (status == null) {
+            return todoRepository.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+                    query, query, PageRequest.of(page, size)
+            );
+        } else {
+            return todoRepository.findByStatusAndTitleContainingIgnoreCaseOrStatusAndDescriptionContainingIgnoreCase(
+                    status, query,
+                    status, query,
+                    PageRequest.of(page, size)
+            );
+        }
     }
 
     public Todo createTodo(TodoInputDTO input) {
