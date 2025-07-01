@@ -25,7 +25,7 @@ public class TodosController {
     }
 
     @GetMapping("")
-    public ResponseEntity<?> retrieveTodos(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "") String query) {
+    public ResponseEntity<TodosPaginedDTO> retrieveTodos(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "") String query) {
         TodosPaginedDTO todos = TodoMapper.todoPageToDTO(todoService.getAllTodos(page, query));
         return ResponseEntity.ok().body(todos);
     }
