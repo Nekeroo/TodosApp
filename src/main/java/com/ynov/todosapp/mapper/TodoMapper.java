@@ -2,9 +2,12 @@ package com.ynov.todosapp.mapper;
 
 import com.ynov.todosapp.dto.TodoDTO;
 import com.ynov.todosapp.dto.TodosPaginedDTO;
+import com.ynov.todosapp.dto.input.TodoInputDTO;
+import com.ynov.todosapp.enums.StatusEnum;
 import com.ynov.todosapp.models.Todo;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +32,15 @@ public class TodoMapper {
                 .totalItems((int) todoPage.getTotalElements())
                 .totalPages(todoPage.getTotalPages())
                 .todos(todos)
+                .build();
+    }
+
+    public static Todo todoInputDTOToTodo(TodoInputDTO input, LocalDate createdDate, StatusEnum status) {
+        return Todo.builder()
+                .title(input.getTitle())
+                .description(input.getDescription())
+                .createdDate(createdDate)
+                .status(status)
                 .build();
     }
 }

@@ -10,8 +10,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -48,7 +46,7 @@ public class RetrieveTodoTest extends TodoControllerTest {
     @Test
     void testGetOneTodoNotFound() {
 
-        when(service.getTodoById(1L)).thenReturn(Optional.empty());
+        when(service.getTodoById(1L)).thenThrow(TaskNotFound.class);
         assertThrows(TaskNotFound.class, () -> controller.retrieveTodoById("1"));
     }
 

@@ -93,7 +93,7 @@ public class UpdateTodoTest extends TodoControllerTest {
                 .description("Description updated")
                 .build();
 
-        when(service.updateTodo(eq(1L), any(TodoInputDTO.class))).thenReturn(null);
+        when(service.updateTodo(eq(1L), any(TodoInputDTO.class))).thenThrow(TaskNotFound.class);
 
         assertThrows(TaskNotFound.class, () -> controller.updateTodo(1L, inputDTO));
     }
@@ -107,7 +107,7 @@ public class UpdateTodoTest extends TodoControllerTest {
                 .description("Different description")
                 .build();
 
-        when(service.updateTodo(eq(1L), any(TodoInputDTO.class))).thenReturn(null);
+        when(service.updateTodo(eq(1L), any(TodoInputDTO.class))).thenThrow(TaskNotFound.class);
         assertThrows(TaskNotFound.class, () -> controller.updateTodo(1L, inputDTO));
     }
 

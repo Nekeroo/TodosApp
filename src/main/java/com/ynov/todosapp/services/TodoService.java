@@ -3,6 +3,7 @@ package com.ynov.todosapp.services;
 import com.ynov.todosapp.dto.input.TodoInputDTO;
 import com.ynov.todosapp.enums.StatusEnum;
 import com.ynov.todosapp.exceptions.TaskNotFound;
+import com.ynov.todosapp.mapper.TodoMapper;
 import com.ynov.todosapp.models.Todo;
 import com.ynov.todosapp.repositories.TodoRepository;
 import org.springframework.data.domain.Page;
@@ -30,18 +31,10 @@ public class TodoService {
     }
 
     public Todo createTodo(TodoInputDTO input) {
-
         input.setTitle(input.getTitle().replaceAll("^\\s+|\\s+$", ""));
 
         String description = (input.getDescription() == null || input.getDescription().isEmpty()) ? "" : input.getDescription();
-
-        // TODO: use mapper
-        Todo todo = Todo.builder()
-                .title(input.getTitle())
-                .description(description)
-                .createdDate(LocalDate.now())
-                .status(StatusEnum.TODO)
-                .build();
+        Todo todo = TodoMapper.todoInputDTOToTodo(input, LocalDate.now(), StatusEnum.TODO);
 
         todoRepository.save(todo);
         return todo;
@@ -52,14 +45,14 @@ public class TodoService {
     }
 
     public Todo updateTodo(Long id, TodoInputDTO input) {
-        final Todo todo = todoRepository.findById(id)
+        Todo todo = todoRepository.findById(id)
                 .orElseThrow(TaskNotFound::new);
 
         input.setTitle(input.getTitle().replaceAll("^\\s+|\\s+$", ""));
 
         todo.setTitle(input.getTitle().trim());
         todo.setDescription(input.getDescription().trim());
-        todoRepository.save(todo);
+        todo = todoRepository.save(todo);
         return todo;
     }
 
