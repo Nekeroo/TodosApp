@@ -4,9 +4,10 @@ import com.ynov.todosapp.controllers.TodoControllerTest;
 import com.ynov.todosapp.dto.TodoDTO;
 import com.ynov.todosapp.dto.input.TodoInputStatusDTO;
 import com.ynov.todosapp.enums.StatusEnum;
+import com.ynov.todosapp.exceptions.InvalidStatus;
+import com.ynov.todosapp.exceptions.TaskNotFound;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,14 +42,7 @@ public class UpdateStatusTodoTest extends TodoControllerTest {
                 .status("INVALID_STATUS")
                 .build();
 
-        ResponseEntity<?> response = controller.updateStatus(1L, todoInputStatusDTO);
-
-        assertTrue(response.getStatusCode().is4xxClientError());
-
-        String erreur = (String) response.getBody();
-
-        assertNotNull(erreur);
-        assertEquals("Invalid status. Allowed values: TODO, ONGOING, DONE", erreur);
+        assertThrows(InvalidStatus.class, () -> controller.updateStatus(1L, todoInputStatusDTO));
     }
 
     @DisplayName("ÉTANT DONNÉ QUE je tente de changer le statut d'une tâche inexistante, LORSQUE j'utilise un ID invalide, ALORS j'obtiens une erreur \"Task not found\"\n")
@@ -59,15 +53,7 @@ public class UpdateStatusTodoTest extends TodoControllerTest {
                 .build();
 
         when(service.updateTodoStatus(eq(1L), any(StatusEnum.class))).thenReturn(null);
-
-        ResponseEntity<?> response = controller.updateStatus(1L, todoInputStatusDTO);
-
-        assertTrue(response.getStatusCode().is4xxClientError());
-
-        String erreur = (String) response.getBody();
-
-        assertNotNull(erreur);
-        assertEquals("Task not found", erreur);
+        assertThrows(TaskNotFound.class, () -> controller.updateStatus(1L, todoInputStatusDTO));
     }
 
 }

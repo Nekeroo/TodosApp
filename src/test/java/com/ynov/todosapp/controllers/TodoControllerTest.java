@@ -60,7 +60,7 @@ public abstract class TodoControllerTest {
         when(service.getAllTodos(anyInt())).thenReturn(todoPage);
         
         // 2. For getTodoById (RetrieveTodoTest)
-        when(service.getTodoById(1L)).thenReturn(Optional.of(existingTodo));
+        when(service.getTodoById(1L)).thenReturn(existingTodo);
         
         // 3. For updateTodoStatus (UpdateStatusTodoTest)
         when(service.updateTodoStatus(eq(1L), any(StatusEnum.class))).thenAnswer(invocation -> {
