@@ -9,8 +9,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,8 +24,8 @@ public class TodoService {
         return todoRepository.findById(id);
     }
 
-    public Page<Todo> getAllTodos(int page, int size) {
-        return todoRepository.findAll(PageRequest.of(page, size));
+    public Page<Todo> getAllTodos(int page) {
+        return todoRepository.findAll(PageRequest.of(page, 10));
     }
 
     public Todo createTodo(TodoInputDTO input) {

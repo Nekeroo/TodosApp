@@ -1,31 +1,15 @@
 package com.ynov.todosapp.controllers.todocontroller;
 
 import com.ynov.todosapp.controllers.TodoControllerTest;
-import com.ynov.todosapp.controllers.TodosController;
 import com.ynov.todosapp.dto.TodoDTO;
 import com.ynov.todosapp.dto.input.TodoInputDTO;
 import com.ynov.todosapp.enums.StatusEnum;
-import com.ynov.todosapp.models.Todo;
-import com.ynov.todosapp.repositories.TodoRepository;
-import com.ynov.todosapp.services.TodoService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class CreateTodoTest extends TodoControllerTest {
@@ -35,7 +19,7 @@ public class CreateTodoTest extends TodoControllerTest {
     void testCreateTodoWithValidTitleAndEmptyDescription() {
 
         TodoInputDTO inputDTO = TodoInputDTO.builder()
-                .title("validTitle")
+                .title("Todo Title")
                 .build();
 
         ResponseEntity<?> responseEntity = controller.createTodo(inputDTO);
@@ -56,8 +40,8 @@ public class CreateTodoTest extends TodoControllerTest {
     void testCreateTodoWithValidTitleAndValidDescription() {
 
         TodoInputDTO inputDTO = TodoInputDTO.builder()
-                .title("validTitle")
-                .description("validDescription")
+                .title("Todo Title")
+                .description("Todo Description")
                 .build();
 
         ResponseEntity<?> responseEntity = controller.createTodo(inputDTO);
@@ -126,7 +110,7 @@ public class CreateTodoTest extends TodoControllerTest {
     @Test
     void testCreateTodoWithValidDescription() {
         TodoInputDTO inputDTO = TodoInputDTO.builder()
-                .title("          validTitle             ")
+                .title("          Todo Title             ")
                 .description("validDescription")
                 .build();
 
@@ -137,14 +121,14 @@ public class CreateTodoTest extends TodoControllerTest {
         TodoDTO todo = (TodoDTO) responseEntity.getBody();
 
         assertNotNull(todo);
-        assertEquals("validTitle", todo.getTitle());
+        assertEquals("Todo Title", todo.getTitle());
     }
 
     @DisplayName("ÉTANT DONNÉ QUE j'ai une tâche nouvellement créée, LORSQUE je la consulte, ALORS sa date de création correspond au moment de création à la seconde près")
     @Test
     void testVerifyDateWhenTodoIsCreated() {
         TodoInputDTO inputDTO = TodoInputDTO.builder()
-                .title("validTitle")
+                .title("Todo Title")
                 .description("validDescription")
                 .build();
 

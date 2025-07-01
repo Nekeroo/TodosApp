@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -104,15 +104,14 @@ public class UpdateTodoTest extends TodoControllerTest {
     @DisplayName("ÉTANT DONNÉ QUE je tente de modifier une tâche inexistante, LORSQUE j'utilise un ID invalide, ALORS j'obtiens une erreur \"Task not found\"\n")
     @Test
     void testUpdateOneTodoWithIdNotFound() {
-        when(service.getTodoById(1L)).thenReturn(Optional.empty());
-
         TodoInputDTO inputDTO = TodoInputDTO.builder()
                 .title("validTitle")
                 .description("Description updated")
                 .build();
 
-        ResponseEntity<?> response = controller.updateTodo(1L, inputDTO);
+        when(service.updateTodo(eq(1L), any(TodoInputDTO.class))).thenReturn(null);
 
+        ResponseEntity<?> response = controller.updateTodo(1L, inputDTO);
         assertTrue(response.getStatusCode().is4xxClientError());
 
         String body = (String) response.getBody();
@@ -123,12 +122,13 @@ public class UpdateTodoTest extends TodoControllerTest {
     @DisplayName("ÉTANT DONNÉ QUE je tente de modifier une tâche inexistante, LORSQUE j'utilise un ID invalide, ALORS j'obtiens une erreur \"Task not found\"\n")
     @Test
     void testUpdateOneTodoWithFieldsNotUpdatable() {
-        when(service.getTodoById(1L)).thenReturn(Optional.empty());
 
         TodoInputDTO inputDTO = TodoInputDTO.builder()
                 .title("validTitle")
                 .description("Different description")
                 .build();
+
+        when(service.updateTodo(eq(1L), any(TodoInputDTO.class))).thenReturn(null);
 
         ResponseEntity<?> response = controller.updateTodo(1L, inputDTO);
 

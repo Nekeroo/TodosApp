@@ -26,8 +26,8 @@ public class TodosController {
     }
 
     @GetMapping("")
-    public ResponseEntity<?> retrieveTodos(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
-        Page<Todo> todoPage = todoService.getAllTodos(page - 1, size);
+    public ResponseEntity<?> retrieveTodos(@RequestParam(defaultValue = "0") int page) {
+        Page<Todo> todoPage = todoService.getAllTodos(page);
 
         List<TodoDTO> todos = new ArrayList<>(todoPage.getContent().stream()
                 .map(todo -> TodoDTO.builder()
