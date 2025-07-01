@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
 public class CreateTodoTest extends TodoControllerTest {
 
     @DisplayName("ÉTANT DONNÉ QUE je fournis un titre valide (non vide, maximum 100 caractères), LORSQUE je crée une tâche, ALORS elle est créée avec un ID unique, le titre fourni, une description vide par défaut, une date de création et le statut \"TODO\"")

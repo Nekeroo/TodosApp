@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
 public class DeleteTodoTest extends TodoControllerTest {
 
     @DisplayName("ÉTANT DONNÉ QUE j'ai une tâche existante, LORSQUE je la supprime, ALORS elle n'apparaît plus dans la liste des tâches\n")
