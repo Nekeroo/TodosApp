@@ -1,0 +1,18 @@
+meta {
+  name: Create todo
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{host}}api/todos/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "title": "Create todo",
+    "description" : "There is a new todo !"
+  }
+}

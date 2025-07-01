@@ -7,10 +7,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TodoInputDTO {
-
-    private String title;
-
-    private String description;
-
+public class TodoInputStatusDTO {
+    private String status;
 }

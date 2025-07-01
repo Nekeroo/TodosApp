@@ -1,5 +1,6 @@
 package com.ynov.todosapp.models;
 
+import com.ynov.todosapp.enums.StatusEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,8 +32,9 @@ public class Todo {
      */
     private String description;
 
-    @Column(name = "is_done")
-    private boolean isDone;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private StatusEnum status;
 
     @Column(name = "created_date")
     private LocalDate createdDate;
