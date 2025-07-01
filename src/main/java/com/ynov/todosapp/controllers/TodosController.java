@@ -5,9 +5,12 @@ import com.ynov.todosapp.dto.TodosPaginedDTO;
 import com.ynov.todosapp.dto.input.TodoInputDTO;
 import com.ynov.todosapp.dto.input.TodoInputStatusDTO;
 import com.ynov.todosapp.enums.StatusEnum;
-import com.ynov.todosapp.exceptions.*;
+import com.ynov.todosapp.exceptions.InvalidIDFormat;
+import com.ynov.todosapp.exceptions.InvalidStatus;
+import com.ynov.todosapp.exceptions.TaskNotFound;
 import com.ynov.todosapp.models.Todo;
 import com.ynov.todosapp.services.TodoService;
+import com.ynov.todosapp.utils.TodoValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -77,19 +80,15 @@ public class TodosController {
 
     @PostMapping("/")
     public ResponseEntity<?> createTodo(@RequestBody TodoInputDTO input) {
-        if (input.getTitle() == null || input.getTitle().trim().isEmpty()) {
-            throw new TitleIsRequired();
+        if (input.getDescription() == null) {
+            input.setDescription("");
         }
 
-        if (input.getTitle().length() > 100) {
-            throw new TitleIsTooLong();
-        }
-
-        if (input.getDescription() != null && input.getDescription().length() > 500) {
-            throw new DescriptionIsTooLong();
-        }
+        TodoValidator.validateTitle(input.getTitle());
+        TodoValidator.validateDescription(input.getDescription());
 
         final Todo todo = todoService.createTodo(input);
+
         return ResponseEntity.ok().body(
                 TodoDTO.builder()
                         .id(todo.getId())
@@ -109,21 +108,12 @@ public class TodosController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateTodo(@PathVariable Long id, @RequestBody TodoInputDTO input) {
-        if (input.getTitle() == null || input.getTitle().trim().isEmpty()) {
-            throw new TitleIsRequired();
-        }
-
-        if (input.getTitle().trim().length() > 100) {
-            throw new TitleIsTooLong();
-        }
-
         if (input.getDescription() == null) {
             input.setDescription("");
         }
 
-        if (input.getDescription().trim().length() > 500) {
-            throw new DescriptionIsTooLong();
-        }
+        TodoValidator.validateTitle(input.getTitle());
+        TodoValidator.validateDescription(input.getDescription());
 
         final Todo todo = todoService.updateTodo(id, input);
 
