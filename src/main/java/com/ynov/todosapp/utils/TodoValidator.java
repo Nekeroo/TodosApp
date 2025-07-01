@@ -2,6 +2,7 @@ package com.ynov.todosapp.utils;
 
 import com.ynov.todosapp.exceptions.DescriptionIsTooLong;
 import com.ynov.todosapp.exceptions.TitleIsRequired;
+import com.ynov.todosapp.exceptions.TitleIsTooLong;
 
 public class TodoValidator {
     public static void validateTitle(String title) {
@@ -10,7 +11,7 @@ public class TodoValidator {
         }
 
         if (title.trim().length() > 100) {
-            throw new TitleIsRequired();
+            throw new TitleIsTooLong();
         }
     }
 
