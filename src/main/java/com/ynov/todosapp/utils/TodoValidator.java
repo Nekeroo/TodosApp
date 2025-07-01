@@ -16,7 +16,7 @@ public class TodoValidator {
     }
 
     public static void validateDescription(String description) {
-        if (description.trim().length() > 500) {
+        if (description != null && description.trim().length() > 500) {
             throw new DescriptionIsTooLong();
         }
     }
