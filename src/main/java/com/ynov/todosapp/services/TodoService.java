@@ -4,6 +4,8 @@ import com.ynov.todosapp.dto.input.TodoInputDTO;
 import com.ynov.todosapp.enums.StatusEnum;
 import com.ynov.todosapp.models.Todo;
 import com.ynov.todosapp.repositories.TodoRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -24,16 +26,8 @@ public class TodoService {
         return todoRepository.findById(id);
     }
 
-    public Iterable<Todo> getAllTodos() {
-
-        Iterable<Todo> todosIterable = todoRepository.findAll();
-
-        List<Todo> todos = new ArrayList<>();
-
-        for (Todo todo : todosIterable) {
-            todos.add(todo);
-        }
-        return todos;
+    public Page<Todo> getAllTodos(int page, int size) {
+        return todoRepository.findAll(PageRequest.of(page, size));
     }
 
     public Todo createTodo(TodoInputDTO input) {

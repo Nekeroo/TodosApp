@@ -1,15 +1,18 @@
 package com.ynov.todosapp.controllers;
 
 import com.ynov.todosapp.dto.TodoDTO;
+import com.ynov.todosapp.dto.TodosPaginedDTO;
 import com.ynov.todosapp.dto.input.TodoInputDTO;
 import com.ynov.todosapp.dto.input.TodoInputStatusDTO;
 import com.ynov.todosapp.enums.StatusEnum;
 import com.ynov.todosapp.models.Todo;
 import com.ynov.todosapp.services.TodoService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -23,23 +26,27 @@ public class TodosController {
     }
 
     @GetMapping("")
-    public ResponseEntity<?> retrieveTodos() {
-        final Iterable<Todo> todos = todoService.getAllTodos();
-        ArrayList<TodoDTO> response = new ArrayList<>();
+    public ResponseEntity<?> retrieveTodos(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Page<Todo> todoPage = todoService.getAllTodos(page, size);
 
-        for (Todo todo : todos) {
-            response.add(
-                    TodoDTO.builder()
-                            .id(todo.getId())
-                            .title(todo.getTitle())
-                            .description(todo.getDescription())
-                            .createdDate(todo.getCreatedDate())
-                            .status(todo.getStatus().getLabel())
-                            .build()
-            );
-        }
+        List<TodoDTO> todos = new ArrayList<>(todoPage.getContent().stream()
+                .map(todo -> TodoDTO.builder()
+                        .id(todo.getId())
+                        .title(todo.getTitle())
+                        .description(todo.getDescription())
+                        .createdDate(todo.getCreatedDate())
+                        .status(todo.getStatus().getLabel())
+                        .build())
+                .toList());
 
-        return ResponseEntity.ok().body(response);
+        TodosPaginedDTO todosPagined = TodosPaginedDTO.builder()
+                .currentPage(page)
+                .totalItems((int) todoPage.getTotalElements())
+                .totalPages(todoPage.getTotalPages())
+                .todos(todos)
+                .build();
+
+        return ResponseEntity.ok().body(todosPagined);
     }
 
     @GetMapping("/{id}")

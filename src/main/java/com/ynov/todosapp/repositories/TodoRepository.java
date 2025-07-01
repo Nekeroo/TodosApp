@@ -3,6 +3,7 @@ package com.ynov.todosapp.repositories;
 
 import com.ynov.todosapp.models.Todo;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
-public interface TodoRepository extends CrudRepository<Todo, Long> {
+public interface TodoRepository extends PagingAndSortingRepository<Todo, Long>, CrudRepository<Todo, Long> {
 }
