@@ -57,7 +57,7 @@ public abstract class TodoControllerTest {
             allTodos.add(existingTodo);
         }
         Page<Todo> todoPage = new PageImpl<>(allTodos);
-        when(service.getAllTodos(anyInt(), eq(""))).thenReturn(todoPage);
+        when(service.getAllTodos(anyInt(), eq(10))).thenReturn(todoPage);
         
         // 2. For getTodoById (RetrieveTodoTest)
         when(service.getTodoById(1L)).thenReturn(existingTodo);

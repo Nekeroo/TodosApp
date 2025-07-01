@@ -5,6 +5,7 @@ import com.ynov.todosapp.dto.input.TodoInputDTO;
 import com.ynov.todosapp.dto.input.TodoInputStatusDTO;
 import com.ynov.todosapp.enums.StatusEnum;
 import com.ynov.todosapp.exceptions.InvalidIDFormat;
+import com.ynov.todosapp.exceptions.InvalidPageSize;
 import com.ynov.todosapp.exceptions.InvalidStatus;
 import com.ynov.todosapp.exceptions.TaskNotFound;
 import com.ynov.todosapp.mapper.TodoMapper;
@@ -25,8 +26,12 @@ public class TodosController {
     }
 
     @GetMapping("")
-    public ResponseEntity<TodosPaginedDTO> retrieveTodos(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "") String query) {
-        TodosPaginedDTO todos = TodoMapper.todoPageToDTO(todoService.getAllTodos(page, query));
+    public ResponseEntity<TodosPaginedDTO> retrieveTodos(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size, @RequestParam(defaultValue = "") String query) {
+        if (size <= 0) {
+            throw new InvalidPageSize();
+        }
+
+        TodosPaginedDTO todos = TodoMapper.todoPageToDTO(todoService.getAllTodos(page, size, query));
         return ResponseEntity.ok().body(todos);
     }
 
