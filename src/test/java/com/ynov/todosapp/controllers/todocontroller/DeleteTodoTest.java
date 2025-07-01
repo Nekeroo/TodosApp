@@ -22,7 +22,7 @@ public class DeleteTodoTest extends TodoControllerTest {
 
         when(repository.findAll()).thenReturn(savedTodos);
 
-        ResponseEntity<?> responseGet = controller.retrieveTodos(1);
+        ResponseEntity<?> responseGet = controller.retrieveTodos(1, "");
 
         TodosPaginedDTO todos = (TodosPaginedDTO) responseGet.getBody();
 
