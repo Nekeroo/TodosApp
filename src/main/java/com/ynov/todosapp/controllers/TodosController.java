@@ -5,6 +5,7 @@ import com.ynov.todosapp.dto.TodosPaginedDTO;
 import com.ynov.todosapp.dto.input.TodoInputDTO;
 import com.ynov.todosapp.dto.input.TodoInputStatusDTO;
 import com.ynov.todosapp.enums.StatusEnum;
+import com.ynov.todosapp.exceptions.*;
 import com.ynov.todosapp.models.Todo;
 import com.ynov.todosapp.services.TodoService;
 import org.springframework.data.domain.Page;
@@ -56,7 +57,7 @@ public class TodosController {
         try {
             todo = todoService.getTodoById(Long.parseLong(id));
         } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body("Invalid ID format");
+            throw new InvalidIDFormat();
         }
 
         if (todo.isPresent()) {
@@ -70,22 +71,22 @@ public class TodosController {
                             .build()
             );
         } else {
-            return ResponseEntity.status(404).body("Task not found");
+            throw new TaskNotFound();
         }
     }
 
     @PostMapping("/")
     public ResponseEntity<?> createTodo(@RequestBody TodoInputDTO input) {
         if (input.getTitle() == null || input.getTitle().trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("Title is required");
+            throw new TitleIsRequired();
         }
 
         if (input.getTitle().length() > 100) {
-            return ResponseEntity.badRequest().body("Title cannot exceed 100 characters");
+            throw new TitleIsTooLong();
         }
 
         if (input.getDescription() != null && input.getDescription().length() > 500) {
-            return ResponseEntity.badRequest().body("Description cannot exceed 500 characters");
+            throw new DescriptionIsTooLong();
         }
 
         final Todo todo = todoService.createTodo(input);
@@ -109,11 +110,11 @@ public class TodosController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateTodo(@PathVariable Long id, @RequestBody TodoInputDTO input) {
         if (input.getTitle() == null || input.getTitle().trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("Title is required");
+            throw new TitleIsRequired();
         }
 
         if (input.getTitle().trim().length() > 100) {
-            return ResponseEntity.badRequest().body("Title cannot exceed 100 characters");
+            throw new TitleIsTooLong();
         }
 
         if (input.getDescription() == null) {
@@ -121,7 +122,7 @@ public class TodosController {
         }
 
         if (input.getDescription().trim().length() > 500) {
-            return ResponseEntity.badRequest().body("Description cannot exceed 500 characters");
+            throw new DescriptionIsTooLong();
         }
 
         final Todo todo = todoService.updateTodo(id, input);
@@ -138,7 +139,7 @@ public class TodosController {
             );
         }
 
-        return ResponseEntity.status(404).body("Task not found");
+        throw new TaskNotFound();
     }
 
     @PutMapping("/status/{id}")
@@ -146,13 +147,13 @@ public class TodosController {
         final StatusEnum status = StatusEnum.getStatusByString(input.getStatus());
 
         if (status == null) {
-            return ResponseEntity.badRequest().body("Invalid status. Allowed values: TODO, ONGOING, DONE");
+            throw new InvalidStatus();
         }
 
         final Todo todo = todoService.updateTodoStatus(id, status);
 
         if (todo == null) {
-            return ResponseEntity.status(404).body("Task not found");
+            throw new TaskNotFound();
         } else {
             return ResponseEntity.ok().body(
                     TodoDTO.builder()

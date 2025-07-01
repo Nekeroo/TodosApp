@@ -4,9 +4,11 @@ import com.ynov.todosapp.controllers.TodoControllerTest;
 import com.ynov.todosapp.dto.TodoDTO;
 import com.ynov.todosapp.dto.input.TodoInputDTO;
 import com.ynov.todosapp.enums.StatusEnum;
+import com.ynov.todosapp.exceptions.DescriptionIsTooLong;
+import com.ynov.todosapp.exceptions.TitleIsRequired;
+import com.ynov.todosapp.exceptions.TitleIsTooLong;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -62,13 +64,7 @@ public class CreateTodoTest extends TodoControllerTest {
                 .title("     ")
                 .build();
 
-        ResponseEntity<?> responseEntity = controller.createTodo(inputDTO);
-
-        assertTrue(responseEntity.getStatusCode().is4xxClientError());
-
-        String body = (String) responseEntity.getBody();
-
-        assertEquals("Title is required", body);
+        assertThrows(TitleIsRequired.class, () -> controller.createTodo(inputDTO));
     }
 
     @DisplayName("ÉTANT DONNÉ QUE je fournis un titre de plus de 100 caractères, LORSQUE je tente de créer une tâche, ALORS j'obtiens une erreur \"Title cannot exceed 100 characters\"")
@@ -78,13 +74,7 @@ public class CreateTodoTest extends TodoControllerTest {
                 .title("e".repeat(101))
                 .build();
 
-        ResponseEntity<?> responseEntity = controller.createTodo(inputDTO);
-
-        assertTrue(responseEntity.getStatusCode().is4xxClientError());
-
-        String body = (String) responseEntity.getBody();
-
-        assertEquals("Title cannot exceed 100 characters", body);
+        assertThrows(TitleIsTooLong.class, () -> controller.createTodo(inputDTO));
     }
 
     @DisplayName("ÉTANT DONNÉ QUE je fournis une description de plus de 500 caractères, LORSQUE je tente de créer une tâche, ALORS j'obtiens une erreur \"Description cannot exceed 500 characters\"")
@@ -95,14 +85,7 @@ public class CreateTodoTest extends TodoControllerTest {
                 .description("e".repeat(501))
                 .build();
 
-        ResponseEntity<?> responseEntity = controller.createTodo(inputDTO);
-
-        assertTrue(responseEntity.getStatusCode().is4xxClientError());
-
-
-        String body = (String) responseEntity.getBody();
-
-        assertEquals("Description cannot exceed 500 characters", body);
+        assertThrows(DescriptionIsTooLong.class, () -> controller.createTodo(inputDTO));
     }
 
     @DisplayName("ÉTANT DONNÉ QUE je fournis une titre qui commence et/ou termine par des espace, LORSQUE je crée une tâche, ALORS elle est créee avec le titre fourni, sans espaces au début ni à la fin\n")

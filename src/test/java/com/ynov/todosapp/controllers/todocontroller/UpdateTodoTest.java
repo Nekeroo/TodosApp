@@ -3,9 +3,12 @@ package com.ynov.todosapp.controllers.todocontroller;
 import com.ynov.todosapp.controllers.TodoControllerTest;
 import com.ynov.todosapp.dto.TodoDTO;
 import com.ynov.todosapp.dto.input.TodoInputDTO;
+import com.ynov.todosapp.exceptions.DescriptionIsTooLong;
+import com.ynov.todosapp.exceptions.TaskNotFound;
+import com.ynov.todosapp.exceptions.TitleIsRequired;
+import com.ynov.todosapp.exceptions.TitleIsTooLong;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -58,13 +61,7 @@ public class UpdateTodoTest extends TodoControllerTest {
         TodoInputDTO inputDTO = TodoInputDTO.builder()
                 .build();
 
-        ResponseEntity<?> response = controller.updateTodo(1L, inputDTO);
-
-        assertTrue(response.getStatusCode().is4xxClientError());
-
-        String body = (String) response.getBody();
-
-        assertEquals("Title is required", body);
+        assertThrows(TitleIsRequired.class, () -> controller.updateTodo(1L, inputDTO));
     }
 
     @DisplayName("ÉTANT DONNÉ QUE je tente de modifier une tâche avec un titre de plus de 100 caractères, LORSQUE je soumets, ALORS j'obtiens une erreur 'Title cannot exceed 100 characters'")
@@ -74,13 +71,7 @@ public class UpdateTodoTest extends TodoControllerTest {
                 .title("e".repeat(101))
                 .build();
 
-        ResponseEntity<?> response = controller.updateTodo(1L, inputDTO);
-
-        assertTrue(response.getStatusCode().is4xxClientError());
-
-        String body = (String) response.getBody();
-
-        assertEquals("Title cannot exceed 100 characters", body);
+        assertThrows(TitleIsTooLong.class, () -> controller.updateTodo(1L, inputDTO));
     }
 
     @DisplayName("ÉTANT DONNÉ QUE je tente de modifier une tâche avec une description de plus de 500 caractères, LORSQUE je soumets, ALORS j'obtiens une erreur \"Description cannot exceed 500 characters\"\n")
@@ -91,13 +82,7 @@ public class UpdateTodoTest extends TodoControllerTest {
                 .description("e".repeat(501))
                 .build();
 
-        ResponseEntity<?> response = controller.updateTodo(1L, inputDTO);
-
-        assertTrue(response.getStatusCode().is4xxClientError());
-
-        String body = (String) response.getBody();
-
-        assertEquals("Description cannot exceed 500 characters", body);
+        assertThrows(DescriptionIsTooLong.class, () -> controller.updateTodo(1L, inputDTO));
     }
 
     @DisplayName("ÉTANT DONNÉ QUE je tente de modifier une tâche inexistante, LORSQUE j'utilise un ID invalide, ALORS j'obtiens une erreur \"Task not found\"\n")
@@ -110,12 +95,7 @@ public class UpdateTodoTest extends TodoControllerTest {
 
         when(service.updateTodo(eq(1L), any(TodoInputDTO.class))).thenReturn(null);
 
-        ResponseEntity<?> response = controller.updateTodo(1L, inputDTO);
-        assertTrue(response.getStatusCode().is4xxClientError());
-
-        String body = (String) response.getBody();
-
-        assertEquals("Task not found", body);
+        assertThrows(TaskNotFound.class, () -> controller.updateTodo(1L, inputDTO));
     }
 
     @DisplayName("ÉTANT DONNÉ QUE je tente de modifier une tâche inexistante, LORSQUE j'utilise un ID invalide, ALORS j'obtiens une erreur \"Task not found\"\n")
@@ -128,14 +108,7 @@ public class UpdateTodoTest extends TodoControllerTest {
                 .build();
 
         when(service.updateTodo(eq(1L), any(TodoInputDTO.class))).thenReturn(null);
-
-        ResponseEntity<?> response = controller.updateTodo(1L, inputDTO);
-
-        assertTrue(response.getStatusCode().is4xxClientError());
-
-        String body = (String) response.getBody();
-
-        assertEquals("Task not found", body);
+        assertThrows(TaskNotFound.class, () -> controller.updateTodo(1L, inputDTO));
     }
 
 }

@@ -2,9 +2,9 @@ package com.ynov.todosapp.controllers.todocontroller;
 
 import com.ynov.todosapp.controllers.TodoControllerTest;
 import com.ynov.todosapp.dto.TodosPaginedDTO;
+import com.ynov.todosapp.exceptions.TaskNotFound;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Optional;
@@ -36,12 +36,6 @@ public class DeleteTodoTest extends TodoControllerTest {
     void testDeleteOneTodoWithInvalidId() {
         when(service.getTodoById(anyLong())).thenReturn(Optional.empty());
 
-        ResponseEntity<?> responseGet = controller.retrieveTodoById("1");
-
-        assertTrue(responseGet.getStatusCode().is4xxClientError());
-
-        String body = (String) responseGet.getBody();
-
-        assertEquals("Task not found", body);
+        assertThrows(TaskNotFound.class, () -> controller.retrieveTodoById("1"));
     }
 }
