@@ -2,6 +2,7 @@ package com.ynov.todosapp.services;
 
 import com.ynov.todosapp.dto.input.TodoInputDTO;
 import com.ynov.todosapp.enums.StatusEnum;
+import com.ynov.todosapp.exceptions.TaskNotFound;
 import com.ynov.todosapp.models.Todo;
 import com.ynov.todosapp.repositories.TodoRepository;
 import org.springframework.data.domain.Page;
@@ -9,7 +10,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 @Service
 public class TodoService {
@@ -20,8 +20,9 @@ public class TodoService {
         this.todoRepository = todoRepository;
     }
 
-    public Optional<Todo> getTodoById(Long id) {
-        return todoRepository.findById(id);
+    public Todo getTodoById(Long id) {
+        return todoRepository.findById(id)
+                .orElseThrow(TaskNotFound::new);
     }
 
     public Page<Todo> getAllTodos(int page) {
@@ -34,6 +35,7 @@ public class TodoService {
 
         String description = (input.getDescription() == null || input.getDescription().isEmpty()) ? "" : input.getDescription();
 
+        // TODO: use mapper
         Todo todo = Todo.builder()
                 .title(input.getTitle())
                 .description(description)
@@ -50,29 +52,23 @@ public class TodoService {
     }
 
     public Todo updateTodo(Long id, TodoInputDTO input) {
-        final Optional<Todo> todo = todoRepository.findById(id);
+        final Todo todo = todoRepository.findById(id)
+                .orElseThrow(TaskNotFound::new);
 
         input.setTitle(input.getTitle().replaceAll("^\\s+|\\s+$", ""));
 
-        if (todo.isEmpty()) {
-            return null;
-        } else {
-            todo.get().setTitle(input.getTitle().trim());
-            todo.get().setDescription(input.getDescription().trim());
-            todoRepository.save(todo.get());
-            return todo.get();
-        }
+        todo.setTitle(input.getTitle().trim());
+        todo.setDescription(input.getDescription().trim());
+        todoRepository.save(todo);
+        return todo;
     }
 
     public Todo updateTodoStatus(Long id, StatusEnum status) {
-        final Optional<Todo> todo = todoRepository.findById(id);
+        final Todo todo = todoRepository.findById(id)
+                .orElseThrow(TaskNotFound::new);
 
-        if (todo.isEmpty()) {
-            return null;
-        } else {
-            todo.get().setStatus(status);
-            todoRepository.save(todo.get());
-            return todo.get();
-        }
+        todo.setStatus(status);
+        todoRepository.save(todo);
+        return todo;
     }
 }

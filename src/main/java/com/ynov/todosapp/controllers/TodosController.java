@@ -14,8 +14,6 @@ import com.ynov.todosapp.utils.TodoValidator;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/todos/")
 public class TodosController {
@@ -34,18 +32,12 @@ public class TodosController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> retrieveTodoById(@PathVariable String id) {
-        final Optional<Todo> todo;
 
         try {
-            todo = todoService.getTodoById(Long.parseLong(id));
+            final Todo todo = todoService.getTodoById(Long.parseLong(id));
+            return ResponseEntity.ok().body(TodoMapper.todoToDTO(todo));
         } catch (NumberFormatException e) {
             throw new InvalidIDFormat();
-        }
-
-        if (todo.isPresent()) {
-            return ResponseEntity.ok().body(TodoMapper.todoToDTO(todo.get()));
-        } else {
-            throw new TaskNotFound();
         }
     }
 
@@ -79,12 +71,7 @@ public class TodosController {
         TodoValidator.validateDescription(input.getDescription());
 
         final Todo todo = todoService.updateTodo(id, input);
-
-        if (todo != null) {
-            return ResponseEntity.ok().body(TodoMapper.todoToDTO(todo));
-        }
-
-        throw new TaskNotFound();
+        return ResponseEntity.ok().body(TodoMapper.todoToDTO(todo));
     }
 
     @PutMapping("/status/{id}")
