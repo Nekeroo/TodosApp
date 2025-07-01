@@ -28,7 +28,7 @@ public class TodoService {
 
     public Page<Todo> getAllTodos(int page, int size, String query) {
         return todoRepository.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                query, query, PageRequest.of(page, 10)
+                query, query, PageRequest.of(page, size)
         );
     }
 

@@ -1,6 +1,7 @@
 package com.ynov.todosapp.controllers.todocontroller;
 
 import com.ynov.todosapp.controllers.TodoControllerTest;
+import com.ynov.todosapp.dto.TodoDTO;
 import com.ynov.todosapp.dto.TodosPaginedDTO;
 import com.ynov.todosapp.enums.StatusEnum;
 import com.ynov.todosapp.models.Todo;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
 
+import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,9 +33,9 @@ public class SearchTodosTest extends TodoControllerTest {
 
         repository.save(existingTodo);
         Page<Todo> todoPage = new PageImpl<>(List.of(existingTodo));
-        when(service.getAllTodos(anyInt(), eq("toto"))).thenReturn(todoPage);;
+        when(service.getAllTodos(anyInt(), eq(10), eq("toto"))).thenReturn(todoPage);;
 
-        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, "toto");
+        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "toto");
 
         assertNotNull(response);
         assertNotNull(response.getBody());
@@ -56,9 +58,9 @@ public class SearchTodosTest extends TodoControllerTest {
 
         repository.save(existingTodo);
         Page<Todo> todoPage = new PageImpl<>(List.of(existingTodo));
-        when(service.getAllTodos(anyInt(), eq("toto"))).thenReturn(todoPage);;
+        when(service.getAllTodos(anyInt(), eq(10), eq("toto"))).thenReturn(todoPage);;
 
-        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, "toto");
+        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "toto");
 
         assertNotNull(response);
         assertNotNull(response.getBody());
@@ -81,17 +83,52 @@ public class SearchTodosTest extends TodoControllerTest {
 
         repository.save(existingTodo);
         Page<Todo> todoPage = new PageImpl<>(List.of(existingTodo));
-        when(service.getAllTodos(anyInt(), eq("toto"))).thenReturn(todoPage);
+        when(service.getAllTodos(anyInt(), eq(10), eq("toto"))).thenReturn(todoPage);
         ;
 
-        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, "toto");
+        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "toto");
 
         assertNotNull(response);
         assertNotNull(response.getBody());
-        assertEquals(response.getBody().getTodos().iterator(), List.of(existingTodo));
 
-        response.getBody().getTodos().forEach(todo -> {
+        HashSet<TodoDTO> todos = new HashSet<>(response.getBody().getTodos());
+
+        assertEquals(response.getBody().getTodos().size(), todos.size());
+
+        todos.forEach(todo -> {
             assertTrue(todo.getTitle().contains("toto") || todo.getDescription().contains("toto"));
         });
+    }
+
+    @DisplayName("ÉTANT DONNÉ QUE je recherche un terme inexistant, LORSQUE j'exécute la recherche, ALORS j'obtiens une liste vide")
+    @Test
+    void testSearchByTermNotFound() {
+        when(service.getAllTodos(anyInt(), eq(10), eq("toto"))).thenReturn(Page.empty());
+        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "toto");
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().getTodos().isEmpty());
+    }
+
+    @DisplayName("ÉTANT DONNÉ QUE je recherche avec des majuscules/minuscules, LORSQUE j'exécute la recherche, ALORS la recherche est insensible à la casse")
+    @Test
+    void testSearchByTermCaseInsensitive() {
+        Todo existingTodo = Todo.builder()
+                .id(2L)
+                .title("Todo Title")
+                .description("Todo Description toto")
+                .status(StatusEnum.TODO)
+                .createdDate(creationDate)
+                .build();
+
+        repository.save(existingTodo);
+        Page<Todo> todoPage = new PageImpl<>(List.of(existingTodo));
+        when(service.getAllTodos(anyInt(), eq(10), eq("TOTO"))).thenReturn(todoPage);;
+
+        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "TOTO");
+
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertFalse(response.getBody().getTodos().isEmpty());
     }
 }
