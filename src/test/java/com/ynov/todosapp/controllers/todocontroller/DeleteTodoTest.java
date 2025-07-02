@@ -2,7 +2,7 @@ package com.ynov.todosapp.controllers.todocontroller;
 
 import com.ynov.todosapp.controllers.TodoControllerTest;
 import com.ynov.todosapp.dto.TodosPaginedDTO;
-import com.ynov.todosapp.exceptions.TaskNotFound;
+import com.ynov.todosapp.exceptions.todo.TaskNotFound;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;

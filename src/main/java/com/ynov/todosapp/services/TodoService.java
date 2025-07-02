@@ -2,7 +2,7 @@ package com.ynov.todosapp.services;
 
 import com.ynov.todosapp.dto.input.TodoInputDTO;
 import com.ynov.todosapp.enums.StatusEnum;
-import com.ynov.todosapp.exceptions.TaskNotFound;
+import com.ynov.todosapp.exceptions.todo.TaskNotFound;
 import com.ynov.todosapp.mapper.TodoMapper;
 import com.ynov.todosapp.models.Todo;
 import com.ynov.todosapp.repositories.TodoRepository;

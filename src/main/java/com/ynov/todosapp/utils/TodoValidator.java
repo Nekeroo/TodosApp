@@ -1,8 +1,8 @@
 package com.ynov.todosapp.utils;
 
-import com.ynov.todosapp.exceptions.DescriptionIsTooLong;
-import com.ynov.todosapp.exceptions.TitleIsRequired;
-import com.ynov.todosapp.exceptions.TitleIsTooLong;
+import com.ynov.todosapp.exceptions.todo.DescriptionIsTooLong;
+import com.ynov.todosapp.exceptions.todo.TitleIsRequired;
+import com.ynov.todosapp.exceptions.todo.TitleIsTooLong;
 
 public class TodoValidator {
     public static void validateTitle(String title) {

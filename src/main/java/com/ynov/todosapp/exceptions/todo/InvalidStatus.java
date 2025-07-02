@@ -1,4 +1,4 @@
-package com.ynov.todosapp.exceptions;
+package com.ynov.todosapp.exceptions.todo;
 
 public class InvalidStatus extends  RuntimeException {
     public  InvalidStatus() {

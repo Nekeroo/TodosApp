@@ -1,4 +1,4 @@
-package com.ynov.todosapp.exceptions;
+package com.ynov.todosapp.exceptions.todo;
 
 public class TaskNotFound extends RuntimeException {
     public TaskNotFound() {
