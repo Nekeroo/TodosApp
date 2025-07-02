@@ -33,9 +33,9 @@ public class SearchQueryTodosTest extends TodoControllerTest {
 
         repository.save(existingTodo);
         Page<Todo> todoPage = new PageImpl<>(List.of(existingTodo));
-        when(service.getAllTodos(anyInt(), eq(10), eq("toto"), eq(""))).thenReturn(todoPage);;
+        when(service.getAllTodos(anyInt(), eq(10), eq("toto"), eq(""), eq(""), eq(""))).thenReturn(todoPage);;
 
-        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "toto", "");
+        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "toto", "", "", "");
 
         assertNotNull(response);
         assertNotNull(response.getBody());
@@ -58,9 +58,9 @@ public class SearchQueryTodosTest extends TodoControllerTest {
 
         repository.save(existingTodo);
         Page<Todo> todoPage = new PageImpl<>(List.of(existingTodo));
-        when(service.getAllTodos(anyInt(), eq(10), eq("toto"), eq(""))).thenReturn(todoPage);;
+        when(service.getAllTodos(anyInt(), eq(10), eq("toto"), eq(""), eq(""), eq(""))).thenReturn(todoPage);;
 
-        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "toto", "");
+        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "toto", "", "", "");
 
         assertNotNull(response);
         assertNotNull(response.getBody());
@@ -83,10 +83,10 @@ public class SearchQueryTodosTest extends TodoControllerTest {
 
         repository.save(existingTodo);
         Page<Todo> todoPage = new PageImpl<>(List.of(existingTodo));
-        when(service.getAllTodos(anyInt(), eq(10), eq("toto"), eq(""))).thenReturn(todoPage);
+        when(service.getAllTodos(anyInt(), eq(10), eq("toto"), eq(""), eq(""), eq(""))).thenReturn(todoPage);
         ;
 
-        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "toto", "");
+        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "toto", "", "", "");
 
         assertNotNull(response);
         assertNotNull(response.getBody());
@@ -103,8 +103,8 @@ public class SearchQueryTodosTest extends TodoControllerTest {
     @DisplayName("ÉTANT DONNÉ QUE je recherche un terme inexistant, LORSQUE j'exécute la recherche, ALORS j'obtiens une liste vide")
     @Test
     void testSearchByTermNotFound() {
-        when(service.getAllTodos(anyInt(), eq(10), eq("toto"), eq(""))).thenReturn(Page.empty());
-        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "toto", "");
+        when(service.getAllTodos(anyInt(), eq(10), eq("toto"), eq(""), eq(""), eq(""))).thenReturn(Page.empty());
+        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "toto", "", "", "");
         assertNotNull(response);
         assertNotNull(response.getBody());
         assertTrue(response.getBody().getTodos().isEmpty());
@@ -123,9 +123,9 @@ public class SearchQueryTodosTest extends TodoControllerTest {
 
         repository.save(existingTodo);
         Page<Todo> todoPage = new PageImpl<>(List.of(existingTodo));
-        when(service.getAllTodos(anyInt(), eq(10), eq("TOTO"), eq(""))).thenReturn(todoPage);;
+        when(service.getAllTodos(anyInt(), eq(10), eq("TOTO"), eq(""), eq(""), eq(""))).thenReturn(todoPage);;
 
-        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "TOTO", "");
+        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "TOTO", "", "", "");
 
         assertNotNull(response);
         assertNotNull(response.getBody());

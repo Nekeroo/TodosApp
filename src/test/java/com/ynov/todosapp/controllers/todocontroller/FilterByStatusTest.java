@@ -28,9 +28,9 @@ public class FilterByStatusTest extends TodoControllerTest {
                 .status(StatusEnum.IN_PROGRESS)
                 .createdDate(creationDate)
                 .build();
-        when(service.getAllTodos(anyInt(), eq(10), eq(""), eq("progress"))).thenReturn(new PageImpl<>(List.of(existingTodo)));
+        when(service.getAllTodos(anyInt(), eq(10), eq(""), eq("progress"), eq(""), eq(""))).thenReturn(new PageImpl<>(List.of(existingTodo)));
 
-        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "", "progress");
+        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "", "progress", "", "");
 
         assertNotNull(response);
         assertNotNull(response.getBody());
@@ -44,7 +44,7 @@ public class FilterByStatusTest extends TodoControllerTest {
     @DisplayName("ÉTANT DONNÉ QUE je filtre par un statut et qu'aucune tâche ne correspond, LORSQUE j'applique le filtre, ALORS j'obtiens une liste vide")
     @Test
     void testFilterByStatusEmptyList() {
-        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "", "progress");
+        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "", "progress", "", "");
         assertNotNull(response);
         assertNotNull(response.getBody());
         assertTrue(response.getBody().getTodos().isEmpty());
@@ -53,7 +53,7 @@ public class FilterByStatusTest extends TodoControllerTest {
     @DisplayName("ÉTANT DONNÉ QUE je filtre par un statut invalide, LORSQUE j'applique le filtre, ALORS j'obtiens une erreur \"Invalid filter status\"")
     @Test
     void testFilterByStatusInvalidStatus() {
-        when(service.getAllTodos(anyInt(), eq(10), eq(""), eq("invalid"))).thenThrow(new InvalidFilterStatus());
-        assertThrows(InvalidFilterStatus.class, () -> controller.retrieveTodos(0, 10, "", "invalid"));
+        when(service.getAllTodos(anyInt(), eq(10), eq(""), eq("invalid"), eq(""), eq(""))).thenThrow(new InvalidFilterStatus());
+        assertThrows(InvalidFilterStatus.class, () -> controller.retrieveTodos(0, 10, "", "invalid", "", ""));
     }
 }
