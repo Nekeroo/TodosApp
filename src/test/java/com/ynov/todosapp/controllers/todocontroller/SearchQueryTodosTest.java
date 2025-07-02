@@ -5,6 +5,7 @@ import com.ynov.todosapp.dto.TodoDTO;
 import com.ynov.todosapp.dto.TodosPaginedDTO;
 import com.ynov.todosapp.enums.StatusEnum;
 import com.ynov.todosapp.models.Todo;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
@@ -20,22 +21,59 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 public class SearchQueryTodosTest extends TodoControllerTest {
-    @DisplayName("- ÉTANT DONNÉ QUE j'ai des tâches contenant un mot-clé dans le titre, LORSQUE je recherche ce terme, ALORS seules les tâches correspondantes sont retournées")
-    @Test
-    void testSearchByTitle() {
-        Todo existingTodo = Todo.builder()
-                .id(2L)
+    
+    private Todo todoWithTitleMatch;
+    private Todo todoWithDescriptionMatch;
+    private Todo todoWithBothMatch;
+    
+    @BeforeEach
+    void setUp() {
+        todoWithTitleMatch = Todo.builder()
+                .id(1L)
                 .title("Todo Title toto")
                 .description("Todo Description")
                 .status(StatusEnum.TODO)
                 .createdDate(creationDate)
                 .build();
+                
+        todoWithDescriptionMatch = Todo.builder()
+                .id(2L)
+                .title("Todo Title")
+                .description("Todo Description toto")
+                .status(StatusEnum.TODO)
+                .createdDate(creationDate)
+                .build();
+                
+        todoWithBothMatch = Todo.builder()
+                .id(3L)
+                .title("Todo Title toto")
+                .description("Todo Description toto")
+                .status(StatusEnum.TODO)
+                .createdDate(creationDate)
+                .build();
+    }
+    
+    private void configureMockForSearch(String query, List<Todo> todos) {
+        Page<Todo> todoPage = new PageImpl<>(todos);
+        when(service.getAllTodos(anyInt(), eq(10), eq(query), eq(""), eq(""), eq("")))
+                .thenReturn(todoPage);
+    }
+    
+    private void configureMockForEmptySearch(String query) {
+        when(service.getAllTodos(anyInt(), eq(10), eq(query), eq(""), eq(""), eq("")))
+                .thenReturn(Page.empty());
+    }
+    
+    private ResponseEntity<TodosPaginedDTO> executeSearch(String query) {
+        return controller.retrieveTodos(0, 10, query, "", "", "");
+    }
 
-        repository.save(existingTodo);
-        Page<Todo> todoPage = new PageImpl<>(List.of(existingTodo));
-        when(service.getAllTodos(anyInt(), eq(10), eq("toto"), eq(""), eq(""), eq(""))).thenReturn(todoPage);;
+    @DisplayName("- ÉTANT DONNÉ QUE j'ai des tâches contenant un mot-clé dans le titre, LORSQUE je recherche ce terme, ALORS seules les tâches correspondantes sont retournées")
+    @Test
+    void testSearchByTitle() {
+        configureMockForSearch("toto", List.of(todoWithTitleMatch));
 
-        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "toto", "", "", "");
+        ResponseEntity<TodosPaginedDTO> response = executeSearch("toto");
 
         assertNotNull(response);
         assertNotNull(response.getBody());
@@ -48,19 +86,9 @@ public class SearchQueryTodosTest extends TodoControllerTest {
     @DisplayName("ÉTANT DONNÉ QUE j'ai des tâches contenant un mot-clé dans la description, LORSQUE je recherche ce terme, ALORS seules les tâches correspondantes sont retournées")
     @Test
     void testSearchByDescription() {
-        Todo existingTodo = Todo.builder()
-                .id(2L)
-                .title("Todo Title")
-                .description("Todo Description toto")
-                .status(StatusEnum.TODO)
-                .createdDate(creationDate)
-                .build();
+        configureMockForSearch("toto", List.of(todoWithDescriptionMatch));
 
-        repository.save(existingTodo);
-        Page<Todo> todoPage = new PageImpl<>(List.of(existingTodo));
-        when(service.getAllTodos(anyInt(), eq(10), eq("toto"), eq(""), eq(""), eq(""))).thenReturn(todoPage);;
-
-        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "toto", "", "", "");
+        ResponseEntity<TodosPaginedDTO> response = executeSearch("toto");
 
         assertNotNull(response);
         assertNotNull(response.getBody());
@@ -73,20 +101,9 @@ public class SearchQueryTodosTest extends TodoControllerTest {
     @DisplayName("ÉTANT DONNÉ QUE j'ai des tâches contenant un mot-clé dans le titre ET la description, LORSQUE je recherche ce terme, ALORS toutes ces tâches sont retournées (sans doublon)")
     @Test
     void testSearchByTitleAndDescription() {
-        Todo existingTodo = Todo.builder()
-                .id(2L)
-                .title("Todo Title toto")
-                .description("Todo Description toto")
-                .status(StatusEnum.TODO)
-                .createdDate(creationDate)
-                .build();
+        configureMockForSearch("toto", List.of(todoWithBothMatch));
 
-        repository.save(existingTodo);
-        Page<Todo> todoPage = new PageImpl<>(List.of(existingTodo));
-        when(service.getAllTodos(anyInt(), eq(10), eq("toto"), eq(""), eq(""), eq(""))).thenReturn(todoPage);
-        ;
-
-        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "toto", "", "", "");
+        ResponseEntity<TodosPaginedDTO> response = executeSearch("toto");
 
         assertNotNull(response);
         assertNotNull(response.getBody());
@@ -103,8 +120,10 @@ public class SearchQueryTodosTest extends TodoControllerTest {
     @DisplayName("ÉTANT DONNÉ QUE je recherche un terme inexistant, LORSQUE j'exécute la recherche, ALORS j'obtiens une liste vide")
     @Test
     void testSearchByTermNotFound() {
-        when(service.getAllTodos(anyInt(), eq(10), eq("toto"), eq(""), eq(""), eq(""))).thenReturn(Page.empty());
-        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "toto", "", "", "");
+        configureMockForEmptySearch("toto");
+        
+        ResponseEntity<TodosPaginedDTO> response = executeSearch("toto");
+        
         assertNotNull(response);
         assertNotNull(response.getBody());
         assertTrue(response.getBody().getTodos().isEmpty());
@@ -113,19 +132,9 @@ public class SearchQueryTodosTest extends TodoControllerTest {
     @DisplayName("ÉTANT DONNÉ QUE je recherche avec des majuscules/minuscules, LORSQUE j'exécute la recherche, ALORS la recherche est insensible à la casse")
     @Test
     void testSearchByTermCaseInsensitive() {
-        Todo existingTodo = Todo.builder()
-                .id(2L)
-                .title("Todo Title")
-                .description("Todo Description toto")
-                .status(StatusEnum.TODO)
-                .createdDate(creationDate)
-                .build();
+        configureMockForSearch("TOTO", List.of(todoWithDescriptionMatch));
 
-        repository.save(existingTodo);
-        Page<Todo> todoPage = new PageImpl<>(List.of(existingTodo));
-        when(service.getAllTodos(anyInt(), eq(10), eq("TOTO"), eq(""), eq(""), eq(""))).thenReturn(todoPage);;
-
-        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "TOTO", "", "", "");
+        ResponseEntity<TodosPaginedDTO> response = executeSearch("TOTO");
 
         assertNotNull(response);
         assertNotNull(response.getBody());
