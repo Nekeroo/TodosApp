@@ -5,7 +5,6 @@ import com.ynov.todosapp.exceptions.user.EmailAlreadyTaken;
 import com.ynov.todosapp.exceptions.user.InvalidEmail;
 import com.ynov.todosapp.exceptions.user.NameIsRequired;
 import com.ynov.todosapp.exceptions.user.NameIsTooLong;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -40,6 +39,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidStatus.class)
     public ResponseEntity<String> handleInvalidStatus() {
         return ResponseEntity.badRequest().body("Invalid status. Allowed values: TODO, ONGOING, DONE");
+    }
+
+    @ExceptionHandler(InvalidPageSize.class)
+    public ResponseEntity<String> handleInvalidPageSize() {
+        return ResponseEntity.badRequest().body("Invalid page size");
+    }
+
+    @ExceptionHandler(InvalidFilterStatus.class)
+    public ResponseEntity<String> handleInvalidFilterStatus() {
+        return ResponseEntity.badRequest().body("Invalid filter status");
+    }
+
+    @ExceptionHandler(InvalidSortCriteria.class)
+    public ResponseEntity<String> handleInvalidSortCriteria() {
+        return ResponseEntity.badRequest().body("Invalid sort criteria");
     }
 
     @ExceptionHandler(InvalidEmail.class)

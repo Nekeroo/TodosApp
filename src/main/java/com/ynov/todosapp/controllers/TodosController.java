@@ -6,6 +6,7 @@ import com.ynov.todosapp.dto.input.TodoInputDTO;
 import com.ynov.todosapp.dto.input.TodoInputStatusDTO;
 import com.ynov.todosapp.enums.StatusEnum;
 import com.ynov.todosapp.exceptions.todo.InvalidIDFormat;
+import com.ynov.todosapp.exceptions.todo.InvalidPageSize;
 import com.ynov.todosapp.exceptions.todo.InvalidStatus;
 import com.ynov.todosapp.exceptions.todo.TaskNotFound;
 import com.ynov.todosapp.mapper.TodoMapper;
@@ -14,11 +15,12 @@ import com.ynov.todosapp.models.User;
 import com.ynov.todosapp.services.TodoService;
 import com.ynov.todosapp.services.UserService;
 import com.ynov.todosapp.utils.TodoValidator;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/todos/")
+@RequestMapping("/api/todos")
 public class TodosController {
 
     private final TodoService todoService;
@@ -30,13 +32,26 @@ public class TodosController {
     }
 
     @GetMapping("")
-    public ResponseEntity<?> retrieveTodos(@RequestParam(defaultValue = "0") int page) {
-        TodosPaginedDTO todos = TodoMapper.todoPageToDTO(todoService.getAllTodos(page));
+    public ResponseEntity<TodosPaginedDTO> retrieveTodos(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "") String query,
+            @RequestParam(defaultValue = "") String status,
+            @RequestParam(defaultValue = "createdDate") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDirection
+    ) {
+        if (size <= 0) {
+            throw new InvalidPageSize();
+        }
+
+        final Page<Todo> todoPage = todoService.getAllTodos(page, size, query, status, sortBy, sortDirection);
+        TodosPaginedDTO todos = TodoMapper.todoPageToDTO(todoPage == null ? Page.empty() : todoPage);
         return ResponseEntity.ok().body(todos);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> retrieveTodoById(@PathVariable String id) {
+
         try {
             final Todo todo = todoService.getTodoById(Long.parseLong(id));
             return ResponseEntity.ok().body(TodoMapper.todoToDTO(todo));
@@ -45,7 +60,7 @@ public class TodosController {
         }
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<?> createTodo(@RequestBody TodoInputDTO input) {
         TodoValidator.validateTitle(input.getTitle());
         TodoValidator.validateDescription(input.getDescription());

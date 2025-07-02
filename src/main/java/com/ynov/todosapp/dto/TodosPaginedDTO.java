@@ -2,6 +2,8 @@ package com.ynov.todosapp.dto;
 
 import lombok.*;
 
+import java.util.Collection;
+
 @Builder
 @Getter
 @Setter
@@ -9,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 public class TodosPaginedDTO {
 
-    private Iterable<TodoDTO> todos;
+    private Collection<TodoDTO> todos;
     private int totalItems;
     private int totalPages;
     private int currentPage;

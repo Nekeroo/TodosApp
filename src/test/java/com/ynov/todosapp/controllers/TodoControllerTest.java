@@ -65,37 +65,37 @@ public abstract class TodoControllerTest {
             allTodos.add(existingTodo);
         }
         Page<Todo> todoPage = new PageImpl<>(allTodos);
-        when(service.getAllTodos(anyInt())).thenReturn(todoPage);
-
+        when(service.getAllTodos(anyInt(), eq(10), eq(""), eq(""), eq(""), eq(""))).thenReturn(todoPage);
+        
         // 2. For getTodoById (RetrieveTodoTest)
         when(service.getTodoById(1L)).thenReturn(existingTodo);
-
+        
         // 3. For updateTodoStatus (UpdateStatusTodoTest)
         when(service.updateTodoStatus(eq(1L), any(StatusEnum.class))).thenAnswer(invocation -> {
             StatusEnum newStatus = invocation.getArgument(1, StatusEnum.class);
             Todo updatedTodo = Todo.builder()
-                    .id(1L)
-                    .title("Todo Title")
-                    .description("Todo Description")
-                    .status(newStatus)
-                    .createdDate(creationDate)
-                    .build();
+                .id(1L)
+                .title("Todo Title")
+                .description("Todo Description")
+                .status(newStatus)
+                .createdDate(creationDate)
+                .build();
             return updatedTodo;
         });
-
+        
         // 4. For createTodo
         when(service.createTodo(any())).thenAnswer(invocation -> existingTodo);
-
+        
         // 5. For updateTodo
         when(service.updateTodo(eq(1L), any())).thenAnswer(invocation -> {
             TodoInputDTO todoDTO = invocation.getArgument(1);
             Todo updatedTodo = Todo.builder()
-                    .id(1L)
-                    .title(todoDTO.getTitle())
-                    .description(todoDTO.getDescription())
-                    .status(StatusEnum.TODO)
-                    .createdDate(creationDate)
-                    .build();
+                .id(1L)
+                .title(todoDTO.getTitle())
+                .description(todoDTO.getDescription())
+                .status(StatusEnum.TODO)
+                .createdDate(creationDate)
+                .build();
             return updatedTodo;
         });
 
@@ -118,5 +118,4 @@ public abstract class TodoControllerTest {
         // Create controller after all mocks are set up
         controller = new TodosController(service, userService);
     }
-
 }
