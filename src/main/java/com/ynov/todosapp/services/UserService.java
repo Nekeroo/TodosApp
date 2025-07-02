@@ -1,11 +1,13 @@
 package com.ynov.todosapp.services;
 
 import com.ynov.todosapp.dto.input.RegisterDTO;
+import com.ynov.todosapp.exceptions.user.UserNotFound;
 import com.ynov.todosapp.models.Role;
 import com.ynov.todosapp.models.User;
 import com.ynov.todosapp.repositories.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +28,8 @@ public class UserService {
     }
 
     public User getUserByEmail(String email) {
-        return userRepository.getUserByEmail(email);
+        return userRepository.getUserByEmail(email)
+                .orElseThrow(UserNotFound::new);
     }
 
     public User registerUser(RegisterDTO registerDTO) {
@@ -44,7 +47,7 @@ public class UserService {
     }
 
     public Page<User> getAllUsers(int page) {
-        return userRepository.findAll(PageRequest.of(page, 10));
+        return userRepository.findAll(PageRequest.of(page, 10, Sort.by("name").ascending()));
     }
 
 }

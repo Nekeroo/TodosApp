@@ -1,5 +1,6 @@
 package com.ynov.todosapp.controllers;
 
+import com.ynov.todosapp.dto.TodoAssignInputDTO;
 import com.ynov.todosapp.dto.TodosPaginedDTO;
 import com.ynov.todosapp.dto.input.TodoInputDTO;
 import com.ynov.todosapp.dto.input.TodoInputStatusDTO;
@@ -9,7 +10,9 @@ import com.ynov.todosapp.exceptions.todo.InvalidStatus;
 import com.ynov.todosapp.exceptions.todo.TaskNotFound;
 import com.ynov.todosapp.mapper.TodoMapper;
 import com.ynov.todosapp.models.Todo;
+import com.ynov.todosapp.models.User;
 import com.ynov.todosapp.services.TodoService;
+import com.ynov.todosapp.services.UserService;
 import com.ynov.todosapp.utils.TodoValidator;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +22,11 @@ import org.springframework.web.bind.annotation.*;
 public class TodosController {
 
     private final TodoService todoService;
+    private final UserService userService;
 
-    public TodosController(TodoService todoService) {
+    public TodosController(TodoService todoService, UserService userService) {
         this.todoService = todoService;
+        this.userService = userService;
     }
 
     @GetMapping("")
@@ -32,7 +37,6 @@ public class TodosController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> retrieveTodoById(@PathVariable String id) {
-
         try {
             final Todo todo = todoService.getTodoById(Long.parseLong(id));
             return ResponseEntity.ok().body(TodoMapper.todoToDTO(todo));
@@ -85,6 +89,18 @@ public class TodosController {
         } else {
             return ResponseEntity.ok().body(TodoMapper.todoToDTO(todo));
         }
+    }
+
+    @PutMapping("/assign/{publicId}")
+    public ResponseEntity<?> assignUserToTodo(@PathVariable Long publicId, @RequestBody TodoAssignInputDTO input) {
+        final Todo todo = todoService.getTodoByPublicId(publicId);
+
+        final User user = userService.getUserByEmail(input.getEmail());
+
+        todo.setUserAffected(user);
+        todoService.saveTodo(todo);
+
+        return ResponseEntity.ok().body(TodoMapper.todoToDTO(todo));
     }
 
 }

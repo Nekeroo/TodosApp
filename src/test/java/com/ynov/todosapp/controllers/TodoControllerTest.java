@@ -3,8 +3,10 @@ package com.ynov.todosapp.controllers;
 import com.ynov.todosapp.dto.input.TodoInputDTO;
 import com.ynov.todosapp.enums.StatusEnum;
 import com.ynov.todosapp.models.Todo;
+import com.ynov.todosapp.models.User;
 import com.ynov.todosapp.repositories.TodoRepository;
 import com.ynov.todosapp.services.TodoService;
+import com.ynov.todosapp.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -29,10 +31,15 @@ public abstract class TodoControllerTest {
     @Mock
     protected TodoService service;
 
+    @Mock
+    protected UserService userService;
+
     protected LocalDate creationDate;
 
     protected TodosController controller;
     protected List<Todo> savedTodos;
+
+    protected User user;
 
     @BeforeEach
     void setUp() {
@@ -42,6 +49,7 @@ public abstract class TodoControllerTest {
 
         Todo existingTodo = Todo.builder()
                 .id(1L)
+                .publicId(1000L)
                 .title("Todo Title")
                 .description("Todo Description")
                 .status(StatusEnum.TODO)
@@ -58,47 +66,57 @@ public abstract class TodoControllerTest {
         }
         Page<Todo> todoPage = new PageImpl<>(allTodos);
         when(service.getAllTodos(anyInt())).thenReturn(todoPage);
-        
+
         // 2. For getTodoById (RetrieveTodoTest)
         when(service.getTodoById(1L)).thenReturn(existingTodo);
-        
+
         // 3. For updateTodoStatus (UpdateStatusTodoTest)
         when(service.updateTodoStatus(eq(1L), any(StatusEnum.class))).thenAnswer(invocation -> {
             StatusEnum newStatus = invocation.getArgument(1, StatusEnum.class);
             Todo updatedTodo = Todo.builder()
-                .id(1L)
-                .title("Todo Title")
-                .description("Todo Description")
-                .status(newStatus)
-                .createdDate(creationDate)
-                .build();
+                    .id(1L)
+                    .title("Todo Title")
+                    .description("Todo Description")
+                    .status(newStatus)
+                    .createdDate(creationDate)
+                    .build();
             return updatedTodo;
         });
-        
+
         // 4. For createTodo
         when(service.createTodo(any())).thenAnswer(invocation -> existingTodo);
-        
+
         // 5. For updateTodo
         when(service.updateTodo(eq(1L), any())).thenAnswer(invocation -> {
             TodoInputDTO todoDTO = invocation.getArgument(1);
             Todo updatedTodo = Todo.builder()
-                .id(1L)
-                .title(todoDTO.getTitle())
-                .description(todoDTO.getDescription())
-                .status(StatusEnum.TODO)
-                .createdDate(creationDate)
-                .build();
+                    .id(1L)
+                    .title(todoDTO.getTitle())
+                    .description(todoDTO.getDescription())
+                    .status(StatusEnum.TODO)
+                    .createdDate(creationDate)
+                    .build();
             return updatedTodo;
         });
-        
+
+        user = User.builder()
+                .id(1L)
+                .name("John Doe")
+                .email("johndoe@gmail.com")
+                .role(List.of())
+                .build();
+
         // Repository mocks if needed
         when(repository.findById(1L)).thenReturn(Optional.of(existingTodo));
         when(repository.save(any(Todo.class))).thenAnswer(invocation -> {
             Todo entity = invocation.getArgument(0, Todo.class);
             return entity;
         });
-        
+
+        when(userService.getUserByEmail(anyString())).thenReturn(user);
+
         // Create controller after all mocks are set up
-        controller = new TodosController(service);
+        controller = new TodosController(service, userService);
     }
+
 }

@@ -12,7 +12,9 @@ import java.time.LocalDate;
 @Setter
 public class TodoDTO {
 
-    private Long id;
+    private long publicId;
+
+    private long id;
 
     private String title;
 

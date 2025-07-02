@@ -67,7 +67,9 @@ public class ListUsersTest extends AuthenticationControllerTest {
     @DisplayName("ÉTANT DONNÉ QUE je demande la liste des utilisateurs, LORSQUE j'exécute la requête, ALORS les utilisateurs sont triés par nom par défaut\n")
     @Test
     void testRetrieveUserFilteredByName() {
-        users.add(User.builder().id(2L).name("Dupont").role(List.of(role)).build());
+        User userMocked = User.builder().id(2L).name("Dupont").role(List.of(role)).build();
+
+        users.add(userMocked);
 
         when(userService.getAllUsers(anyInt())).thenReturn(new PageImpl<>(users, PageRequest.of(anyInt(), 10), users.size()));
 
@@ -85,7 +87,11 @@ public class ListUsersTest extends AuthenticationControllerTest {
         assertAll(
                 () -> assertNotNull(responseBody),
                 () -> assertEquals(users.size(), usersRetrieves.size()),
+                () -> {
+                    assertEquals(userMocked.getName(), usersRetrieves.getFirst().getName());
+                },
                 () -> assertTrue(usersRetrieves.stream().allMatch(user -> user.getName() != null))
         );
     }
+
 }

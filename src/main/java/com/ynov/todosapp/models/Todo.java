@@ -20,6 +20,9 @@ public class Todo {
     @Column(name = "id", nullable = false)
     private long id;
 
+    @Column(name = "public_id")
+    private long publicId;
+
     private String title;
 
     private String description;

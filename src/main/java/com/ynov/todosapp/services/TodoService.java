@@ -26,6 +26,10 @@ public class TodoService {
                 .orElseThrow(TaskNotFound::new);
     }
 
+    public Todo saveTodo(Todo todo) {
+        return todoRepository.save(todo);
+    }
+
     public Page<Todo> getAllTodos(int page) {
         return todoRepository.findAll(PageRequest.of(page, 10));
     }
@@ -36,6 +40,7 @@ public class TodoService {
         String description = (input.getDescription() == null || input.getDescription().isEmpty()) ? "" : input.getDescription();
         input.setDescription(description);
         Todo todo = TodoMapper.todoInputDTOToTodo(input, LocalDate.now(), StatusEnum.TODO);
+        todo.setPublicId(1L + (long) (Math.random() * (1L - 9999L)));
 
         todoRepository.save(todo);
         return todo;
@@ -62,5 +67,10 @@ public class TodoService {
         todo.setStatus(status);
         todoRepository.save(todo);
         return todo;
+    }
+
+    public Todo getTodoByPublicId(Long publicId) {
+        return todoRepository.findByPublicId(publicId).
+                orElseThrow(TaskNotFound::new);
     }
 }
