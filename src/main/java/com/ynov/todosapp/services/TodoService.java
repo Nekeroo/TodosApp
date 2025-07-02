@@ -4,6 +4,7 @@ import com.ynov.todosapp.dto.input.TodoInputDTO;
 import com.ynov.todosapp.enums.StatusEnum;
 import com.ynov.todosapp.enums.TodoSort;
 import com.ynov.todosapp.exceptions.InvalidFilterStatus;
+import com.ynov.todosapp.exceptions.InvalidSortCriteria;
 import com.ynov.todosapp.exceptions.TaskNotFound;
 import com.ynov.todosapp.mapper.TodoMapper;
 import com.ynov.todosapp.models.Todo;
@@ -31,7 +32,7 @@ public class TodoService {
 
     public Page<Todo> getAllTodos(int page, int size, String query, String statusString, String sortBy, String sortDirection) {
         TodoSort todoSort = TodoSort.getSortByString(sortBy)
-                .orElse(TodoSort.CREATED_DATE);
+                .orElseThrow(InvalidSortCriteria::new);
         StatusEnum status = StatusEnum.getStatusByString(statusString);
         Sort.Direction direction = sortDirection.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(direction, todoSort.getLabel()));

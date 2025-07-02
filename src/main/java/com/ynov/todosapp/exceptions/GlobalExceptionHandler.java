@@ -45,4 +45,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleInvalidFilterStatus() {
         return ResponseEntity.badRequest().body("Invalid filter status");
     }
+
+    @ExceptionHandler(InvalidSortCriteria.class)
+    public ResponseEntity<String> handleInvalidSortCriteria() {
+        return ResponseEntity.badRequest().body("Invalid sort criteria");
+    }
 }
