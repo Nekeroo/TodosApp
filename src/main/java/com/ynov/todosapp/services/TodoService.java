@@ -34,17 +34,7 @@ public class TodoService {
             throw new InvalidFilterStatus();
         }
 
-        if (status == null) {
-            return todoRepository.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-                    query, query, PageRequest.of(page, size)
-            );
-        } else {
-            return todoRepository.findByStatusAndTitleContainingIgnoreCaseOrStatusAndDescriptionContainingIgnoreCase(
-                    status, query,
-                    status, query,
-                    PageRequest.of(page, size)
-            );
-        }
+        return todoRepository.searchTodos(status, query, PageRequest.of(page, size));
     }
 
     public Todo createTodo(TodoInputDTO input) {
