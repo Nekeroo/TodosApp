@@ -4,6 +4,8 @@ import com.ynov.todosapp.dto.input.RegisterDTO;
 import com.ynov.todosapp.models.Role;
 import com.ynov.todosapp.models.User;
 import com.ynov.todosapp.repositories.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +41,10 @@ public class UserService {
                 .build();
 
         return userRepository.save(user);
+    }
+
+    public Page<User> getAllUsers(int page) {
+        return userRepository.findAll(PageRequest.of(page, 10));
     }
 
 }

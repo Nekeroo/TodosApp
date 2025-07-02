@@ -1,4 +1,4 @@
-package com.ynov.todosapp.controllers.todocontroller;
+package com.ynov.todosapp.controllers.todo;
 
 import com.ynov.todosapp.controllers.TodoControllerTest;
 import com.ynov.todosapp.dto.TodoDTO;

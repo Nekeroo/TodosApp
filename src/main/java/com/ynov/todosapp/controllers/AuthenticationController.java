@@ -1,16 +1,20 @@
 package com.ynov.todosapp.controllers;
 
 import com.ynov.todosapp.config.jwt.JwtTokenProvider;
+import com.ynov.todosapp.dto.TodosPaginedDTO;
 import com.ynov.todosapp.dto.UserDTO;
+import com.ynov.todosapp.dto.UserPaginedDTO;
 import com.ynov.todosapp.dto.input.LoginDTO;
 import com.ynov.todosapp.dto.input.RegisterDTO;
 import com.ynov.todosapp.exceptions.user.EmailAlreadyTaken;
 import com.ynov.todosapp.exceptions.user.WrongCredentiels;
 import com.ynov.todosapp.mapper.RoleMapper;
+import com.ynov.todosapp.mapper.TodoMapper;
 import com.ynov.todosapp.mapper.UserMapper;
 import com.ynov.todosapp.models.Role;
 import com.ynov.todosapp.models.User;
 import com.ynov.todosapp.services.UserService;
+import com.ynov.todosapp.utils.UserValidator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +22,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.memory.UserAttribute;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Collectors;
@@ -54,9 +59,7 @@ public class AuthenticationController {
             UserDTO userDTO = UserMapper.toDTO(user, token);
             return ResponseEntity.ok().body(userDTO);
         } catch (AuthenticationException e) {
-
             throw new WrongCredentiels();
-
         }
     }
 
@@ -66,6 +69,9 @@ public class AuthenticationController {
         if (this.userService.getUserByEmail(registerDTO.getEmail()) != null) {
             throw new EmailAlreadyTaken();
         }
+
+        UserValidator.validateUsername(registerDTO.getUsername());
+        UserValidator.validateEmail(registerDTO.getEmail());
 
         User user = userService.registerUser(registerDTO);
 
@@ -78,6 +84,12 @@ public class AuthenticationController {
         UserDTO userDTO = UserMapper.toDTO(user, token);
         return ResponseEntity.ok().body(userDTO);
 
+    }
+
+    @GetMapping("/users/retrieve")
+    public ResponseEntity<?> retrieveAllUsers(@RequestParam(defaultValue = "0") int page) {
+        UserPaginedDTO users = UserMapper.userPageToDTO(userService.getAllUsers(page));
+        return ResponseEntity.ok().body(users);
     }
 
 }
