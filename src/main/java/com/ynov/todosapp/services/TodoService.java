@@ -2,6 +2,7 @@ package com.ynov.todosapp.services;
 
 import com.ynov.todosapp.dto.input.TodoInputDTO;
 import com.ynov.todosapp.enums.StatusEnum;
+import com.ynov.todosapp.enums.TodoSort;
 import com.ynov.todosapp.exceptions.InvalidFilterStatus;
 import com.ynov.todosapp.exceptions.TaskNotFound;
 import com.ynov.todosapp.mapper.TodoMapper;
@@ -9,6 +10,7 @@ import com.ynov.todosapp.models.Todo;
 import com.ynov.todosapp.repositories.TodoRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -27,14 +29,18 @@ public class TodoService {
                 .orElseThrow(TaskNotFound::new);
     }
 
-    public Page<Todo> getAllTodos(int page, int size, String query, String statusString) {
+    public Page<Todo> getAllTodos(int page, int size, String query, String statusString, String sortBy, String sortDirection) {
+        TodoSort todoSort = TodoSort.getSortByString(sortBy)
+                .orElse(TodoSort.CREATED_DATE);
         StatusEnum status = StatusEnum.getStatusByString(statusString);
+        Sort.Direction direction = sortDirection.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(direction, todoSort.getLabel()));
 
         if (!statusString.isEmpty() && status == null) {
             throw new InvalidFilterStatus();
         }
 
-        return todoRepository.searchTodos(status, query, PageRequest.of(page, size));
+        return todoRepository.searchTodos(status, query.trim(), pageRequest);
     }
 
     public Todo createTodo(TodoInputDTO input) {

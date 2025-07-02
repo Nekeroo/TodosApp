@@ -17,7 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/todos/")
+@RequestMapping("/api/todos")
 public class TodosController {
 
     private final TodoService todoService;
@@ -31,13 +31,15 @@ public class TodosController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "") String query,
-            @RequestParam(defaultValue = "") String status
+            @RequestParam(defaultValue = "") String status,
+            @RequestParam(defaultValue = "createdDate") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDirection
     ) {
         if (size <= 0) {
             throw new InvalidPageSize();
         }
 
-        final Page<Todo> todoPage = todoService.getAllTodos(page, size, query, status);
+        final Page<Todo> todoPage = todoService.getAllTodos(page, size, query, status, sortBy, sortDirection);
         TodosPaginedDTO todos = TodoMapper.todoPageToDTO(todoPage == null ? Page.empty() : todoPage);
         return ResponseEntity.ok().body(todos);
     }
