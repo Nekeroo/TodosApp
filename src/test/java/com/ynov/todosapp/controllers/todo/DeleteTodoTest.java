@@ -18,7 +18,7 @@ public class DeleteTodoTest extends TodoControllerTest {
 
         assertTrue(response.getStatusCode().is2xxSuccessful());
 
-        ResponseEntity<?> responseGet = controller.retrieveTodos(1, 10, "", "", "createdDate", "", null, null);
+        ResponseEntity<?> responseGet = controller.retrieveTodos(1, 10, "", "", "createdDate", "", null, null, null);
 
         TodosPaginedDTO todos = (TodosPaginedDTO) responseGet.getBody();
 

@@ -2,6 +2,7 @@ package com.ynov.todosapp.controllers.todo;
 
 import com.ynov.todosapp.controllers.TodoControllerTest;
 import com.ynov.todosapp.dto.TodoDTO;
+import com.ynov.todosapp.dto.TodosPaginedDTO;
 import com.ynov.todosapp.dto.input.TodoInputDTO;
 import com.ynov.todosapp.enums.PriorityEnum;
 import com.ynov.todosapp.exceptions.priority.InvalidPriorityException;
@@ -10,9 +11,45 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PriorityTest extends TodoControllerTest {
+
+    @DisplayName("ÉTANT DONNÉ QUE j'ai des tâches avec différentes priorités, LORSQUE je trie par priorité, ALORS elles sont ordonnées : MAJOR, HIGH, NORMAL, LOW")
+    @Test
+    void testSortByPriority() {
+        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "", "", "priority", "asc", null, null, "");
+
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+
+        List<TodoDTO> todos = response.getBody().getTodos().stream().toList();
+        List<TodoDTO> sortedTodos = new ArrayList<>(response.getBody().getTodos());
+        sortedTodos.sort(Comparator.comparing(TodoDTO::getPriority));
+
+        assertFalse(todos.isEmpty());
+        
+        assertEquals(todos, sortedTodos);
+    }
+
+    @DisplayName("ÉTANT DONNÉ QUE j'ai des tâches avec différentes priorités, LORSQUE je filtre par une priorité spécifique, ALORS seules les tâches avec cette priorité sont retournées")
+    @Test
+    void testFilterByPriority() {
+        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10, "", "", "createdDate", "desc", null, null, "high");
+        
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        List<TodoDTO> todos = response.getBody().getTodos().stream().toList();
+        assertFalse(todos.isEmpty());
+        
+        todos.forEach(todo -> {
+            assertEquals(PriorityEnum.HIGH.getLabel(), todo.getPriority());
+        });
+    }
 
     @DisplayName("- **ÉTANT DONNÉ QUE** j'ai une tâche existante, **LORSQUE** je définis sa priorité à \"LOW\", \"NORMAL\", \"HIGH\" ou \"CRITICAL\", **ALORS** la priorité est enregistrée\n")
     @Test
@@ -69,6 +106,4 @@ public class PriorityTest extends TodoControllerTest {
 
         assertThrows(InvalidPriorityException.class, () -> controller.updateTodo(99L, inputDTO));
     }
-
-
 }

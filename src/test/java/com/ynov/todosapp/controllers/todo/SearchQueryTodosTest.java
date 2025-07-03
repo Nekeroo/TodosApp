@@ -17,7 +17,7 @@ public class SearchQueryTodosTest extends TodoControllerTest {
     @Test
     void testSearchByTitle() {
 
-        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10,"toto" , "", "createdDate", "", null, null);
+        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10,"toto" , "", "createdDate", "", null, null, null);
 
         assertNotNull(response);
         assertNotNull(response.getBody());
@@ -31,7 +31,7 @@ public class SearchQueryTodosTest extends TodoControllerTest {
     @Test
     void testSearchByDescription() {
 
-        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10,"toto" , "", "createdDate", "", null, null);
+        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10,"toto" , "", "createdDate", "", null, null, null);
 
         assertNotNull(response);
         assertNotNull(response.getBody());
@@ -45,7 +45,7 @@ public class SearchQueryTodosTest extends TodoControllerTest {
     @Test
     void testSearchByTitleAndDescription() {
 
-        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10,"toto" , "", "createdDate", "", null, null);
+        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10,"toto" , "", "createdDate", "", null, null, null);
 
         assertNotNull(response);
         assertNotNull(response.getBody());
@@ -63,7 +63,7 @@ public class SearchQueryTodosTest extends TodoControllerTest {
     @Test
     void testSearchByTermNotFound() {
 
-        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10,"zzzzzzz" , "", "createdDate", "", null, null);
+        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10,"zzzzzzz" , "", "createdDate", "", null, null, null);
         
         assertNotNull(response);
         assertNotNull(response.getBody());
@@ -74,7 +74,7 @@ public class SearchQueryTodosTest extends TodoControllerTest {
     @Test
     void testSearchByTermCaseInsensitive() {
 
-        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10,"TOTO" , "", "createdDate", "", null, null);
+        ResponseEntity<TodosPaginedDTO> response = controller.retrieveTodos(0, 10,"TOTO" , "", "createdDate", "", null, null, null);
 
         assertNotNull(response);
         assertNotNull(response.getBody());

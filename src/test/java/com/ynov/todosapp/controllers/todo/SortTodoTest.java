@@ -19,7 +19,7 @@ public class SortTodoTest extends TodoControllerTest {
     @Test
     void testSortByCreatedDateAsc() {
 
-        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "", "createdDate", "asc", null, null);
+        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "", "createdDate", "asc", null, null, null);
 
         TodosPaginedDTO todosPaginedDTO = (TodosPaginedDTO) todos.getBody();
 
@@ -38,7 +38,7 @@ public class SortTodoTest extends TodoControllerTest {
     @Test
     void testSortByCreatedDateDesc() {
 
-        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "", "createdDate", "", null, null);
+        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "", "createdDate", "", null, null, null);
 
         TodosPaginedDTO todosPaginedDTO = (TodosPaginedDTO) todos.getBody();
 
@@ -59,7 +59,7 @@ public class SortTodoTest extends TodoControllerTest {
     @Test
     void testSortByTitleAsc() {
 
-        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "", "title", "asc", null, null);
+        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "", "title", "asc", null, null, null);
 
         TodosPaginedDTO todosPaginedDTO = (TodosPaginedDTO) todos.getBody();
 
@@ -78,7 +78,7 @@ public class SortTodoTest extends TodoControllerTest {
     @Test
     void testSortByTitleDesc() {
 
-        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "", "title", "desc", null, null);
+        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "", "title", "desc", null, null, null);
 
         TodosPaginedDTO todosPaginedDTO = (TodosPaginedDTO) todos.getBody();
 
@@ -97,7 +97,7 @@ public class SortTodoTest extends TodoControllerTest {
     @Test
     void testSortByStatus() {
 
-        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "", "status", "asc", null, null);
+        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "", "status", "asc", null, null, null);
 
         TodosPaginedDTO todosPaginedDTO = (TodosPaginedDTO) todos.getBody();
 
@@ -116,7 +116,7 @@ public class SortTodoTest extends TodoControllerTest {
     @Test
     void testDefaultSortIsCreatedDateDesc() {
 
-        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "", "createdDate", "desc", null, null);
+        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "", "createdDate", "desc", null, null, null);
 
         TodosPaginedDTO todosPaginedDTO = (TodosPaginedDTO) todos.getBody();
 
@@ -135,7 +135,7 @@ public class SortTodoTest extends TodoControllerTest {
     @Test
     void testInvalidSortCriteria() {
         assertThrows(InvalidSortCriteria.class, () -> 
-            controller.retrieveTodos(0, 10, "", "", "invalid", "asc", null, null)
+            controller.retrieveTodos(0, 10, "", "", "invalid", "asc", null, null, null)
         );
     }
 
@@ -143,7 +143,7 @@ public class SortTodoTest extends TodoControllerTest {
     @Test
     void testCombineSortAndFilter() {
 
-        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "progress", "createdDate", "desc", null, null);
+        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "progress", "createdDate", "desc", null, null, null);
 
         TodosPaginedDTO todosPaginedDTO = (TodosPaginedDTO) todos.getBody();
 
