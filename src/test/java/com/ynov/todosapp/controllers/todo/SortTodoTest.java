@@ -1,4 +1,4 @@
-package com.ynov.todosapp.controllers.todocontroller;
+package com.ynov.todosapp.controllers.todo;
 
 import com.ynov.todosapp.controllers.TodoControllerTest;
 import com.ynov.todosapp.dto.TodoDTO;
@@ -19,9 +19,11 @@ public class SortTodoTest extends TodoControllerTest {
     @Test
     void testSortByCreatedDateAsc() {
 
-        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "", "createdDate", "asc");
+        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "", "createdDate", "asc", null, null);
 
         TodosPaginedDTO todosPaginedDTO = (TodosPaginedDTO) todos.getBody();
+
+        assertNotNull(todosPaginedDTO);
 
         List<TodoDTO> todosRetrieved = todosPaginedDTO.getTodos().stream().toList();
 
@@ -36,9 +38,11 @@ public class SortTodoTest extends TodoControllerTest {
     @Test
     void testSortByCreatedDateDesc() {
 
-        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "", "createdDate", "");
+        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "", "createdDate", "", null, null);
 
         TodosPaginedDTO todosPaginedDTO = (TodosPaginedDTO) todos.getBody();
+
+        assertNotNull(todosPaginedDTO);
 
         List<TodoDTO> todosRetrieved = todosPaginedDTO.getTodos().stream().toList();
 
@@ -55,9 +59,11 @@ public class SortTodoTest extends TodoControllerTest {
     @Test
     void testSortByTitleAsc() {
 
-        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "", "title", "asc");
+        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "", "title", "asc", null, null);
 
         TodosPaginedDTO todosPaginedDTO = (TodosPaginedDTO) todos.getBody();
+
+        assertNotNull(todosPaginedDTO);
 
         List<TodoDTO> todosRetrieved = todosPaginedDTO.getTodos().stream().toList();
 
@@ -72,9 +78,11 @@ public class SortTodoTest extends TodoControllerTest {
     @Test
     void testSortByTitleDesc() {
 
-        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "", "title", "desc");
+        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "", "title", "desc", null, null);
 
         TodosPaginedDTO todosPaginedDTO = (TodosPaginedDTO) todos.getBody();
+
+        assertNotNull(todosPaginedDTO);
 
         List<TodoDTO> todosRetrieved = todosPaginedDTO.getTodos().stream().toList();
 
@@ -89,9 +97,11 @@ public class SortTodoTest extends TodoControllerTest {
     @Test
     void testSortByStatus() {
 
-        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "", "status", "asc");
+        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "", "status", "asc", null, null);
 
         TodosPaginedDTO todosPaginedDTO = (TodosPaginedDTO) todos.getBody();
+
+        assertNotNull(todosPaginedDTO);
 
         List<TodoDTO> todosRetrieved = todosPaginedDTO.getTodos().stream().toList();
 
@@ -106,9 +116,11 @@ public class SortTodoTest extends TodoControllerTest {
     @Test
     void testDefaultSortIsCreatedDateDesc() {
 
-        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "", "createdDate", "desc");
+        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "", "createdDate", "desc", null, null);
 
         TodosPaginedDTO todosPaginedDTO = (TodosPaginedDTO) todos.getBody();
+
+        assertNotNull(todosPaginedDTO);
 
         List<TodoDTO> todosRetrieved = todosPaginedDTO.getTodos().stream().toList();
 
@@ -123,7 +135,7 @@ public class SortTodoTest extends TodoControllerTest {
     @Test
     void testInvalidSortCriteria() {
         assertThrows(InvalidSortCriteria.class, () -> 
-            controller.retrieveTodos(0, 10, "", "", "invalid", "asc")
+            controller.retrieveTodos(0, 10, "", "", "invalid", "asc", null, null)
         );
     }
 
@@ -131,9 +143,11 @@ public class SortTodoTest extends TodoControllerTest {
     @Test
     void testCombineSortAndFilter() {
 
-        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "progress", "createdDate", "desc");
+        ResponseEntity<?> todos = controller.retrieveTodos(0, 10, "", "progress", "createdDate", "desc", null, null);
 
         TodosPaginedDTO todosPaginedDTO = (TodosPaginedDTO) todos.getBody();
+
+        assertNotNull(todosPaginedDTO);
 
         List<TodoDTO> todosRetrieved = todosPaginedDTO.getTodos().stream().toList();
 
