@@ -21,4 +21,14 @@ public class TodoDTO {
 
     private LocalDate createdDate;
 
+    @Override
+    public String toString() {
+        return "TodoDTO{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", status='" + status + '\'' +
+                ", createdDate=" + createdDate +
+                '}';
+    }
 }

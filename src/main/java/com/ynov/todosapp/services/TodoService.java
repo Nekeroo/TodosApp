@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -80,5 +81,10 @@ public class TodoService {
         todo.setStatus(status);
         todoRepository.save(todo);
         return todo;
+    }
+
+    @Transactional
+    public void deleteTodoByUserIdAffected(Long id) {
+        todoRepository.deleteByUserAffected(id);
     }
 }

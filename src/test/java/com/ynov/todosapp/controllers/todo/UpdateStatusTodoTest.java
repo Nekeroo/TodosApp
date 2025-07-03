@@ -11,9 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
 
 public class UpdateStatusTodoTest extends TodoControllerTest {
 
@@ -25,7 +22,7 @@ public class UpdateStatusTodoTest extends TodoControllerTest {
                 .status(StatusEnum.IN_PROGRESS.getLabel())
                 .build();
 
-        ResponseEntity<?> response = controller.updateStatus(1L, todoInputStatusDTO);
+        ResponseEntity<?> response = controller.updateStatus(99L, todoInputStatusDTO);
 
         assertTrue(response.getStatusCode().is2xxSuccessful());
 
@@ -52,7 +49,6 @@ public class UpdateStatusTodoTest extends TodoControllerTest {
                 .status(StatusEnum.DONE.getLabel())
                 .build();
 
-        when(service.updateTodoStatus(eq(1L), any(StatusEnum.class))).thenReturn(null);
         assertThrows(TaskNotFound.class, () -> controller.updateStatus(1L, todoInputStatusDTO));
     }
 

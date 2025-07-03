@@ -1,7 +1,6 @@
 package com.ynov.todosapp.controllers;
 
 import com.ynov.todosapp.config.jwt.JwtTokenProvider;
-import com.ynov.todosapp.dto.TodosPaginedDTO;
 import com.ynov.todosapp.dto.UserDTO;
 import com.ynov.todosapp.dto.UserPaginedDTO;
 import com.ynov.todosapp.dto.input.LoginDTO;
@@ -9,7 +8,6 @@ import com.ynov.todosapp.dto.input.RegisterDTO;
 import com.ynov.todosapp.exceptions.user.EmailAlreadyTaken;
 import com.ynov.todosapp.exceptions.user.WrongCredentiels;
 import com.ynov.todosapp.mapper.RoleMapper;
-import com.ynov.todosapp.mapper.TodoMapper;
 import com.ynov.todosapp.mapper.UserMapper;
 import com.ynov.todosapp.models.Role;
 import com.ynov.todosapp.models.User;
@@ -22,7 +20,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.memory.UserAttribute;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Collectors;
@@ -66,7 +63,7 @@ public class AuthenticationController {
     @PostMapping("/")
     public ResponseEntity<?> registerUser(@RequestBody RegisterDTO registerDTO) {
 
-        if (this.userService.getUserByEmail(registerDTO.getEmail()) != null) {
+        if (this.userService.isUserExist(registerDTO.getEmail())) {
             throw new EmailAlreadyTaken();
         }
 

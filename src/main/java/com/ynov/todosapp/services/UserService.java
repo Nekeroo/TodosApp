@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,6 +33,10 @@ public class UserService {
                 .orElseThrow(UserNotFound::new);
     }
 
+    public boolean isUserExist(String email) {
+        return userRepository.getUserByEmail(email).isPresent();
+    }
+
     public User registerUser(RegisterDTO registerDTO) {
         Role role = roleService.getRoleByLabel("USER");
 
@@ -48,6 +53,16 @@ public class UserService {
 
     public Page<User> getAllUsers(int page) {
         return userRepository.findAll(PageRequest.of(page, 10, Sort.by("name").ascending()));
+    }
+
+    @Transactional
+    public void removeRoleFromUser(long userId, long roleId) {
+        User user  = userRepository.findById(userId).orElseThrow();
+        Role role  = roleService.getRoleById(roleId);
+
+        user.getRole().remove(role);
+
+        userRepository.save(user);
     }
 
 }

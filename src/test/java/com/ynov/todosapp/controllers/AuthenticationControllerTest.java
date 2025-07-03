@@ -5,42 +5,40 @@ import com.ynov.todosapp.dto.UserPaginedDTO;
 import com.ynov.todosapp.dto.input.RegisterDTO;
 import com.ynov.todosapp.models.Role;
 import com.ynov.todosapp.models.User;
-import com.ynov.todosapp.repositories.RoleRepository;
 import com.ynov.todosapp.repositories.UserRepository;
 import com.ynov.todosapp.services.RoleService;
 import com.ynov.todosapp.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
+
+
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest
+@ActiveProfiles("test")
 public abstract class AuthenticationControllerTest {
 
-    @Mock
-    protected UserRepository userRepository;
-
-    @Mock
+    @Autowired
     protected UserService userService;
 
-    @Mock
-    protected RoleRepository roleRepository;
-
-    @Mock
+    @Autowired
     protected RoleService roleService;
 
-    @Mock
+    @Autowired
+    protected UserRepository userRepository;
+
+    @Autowired
     protected AuthenticationManager authenticationManager;
 
-    @Mock
+    @Autowired
     protected JwtTokenProvider jwtTokenProvider;
-
-    protected List<User> users;
 
     protected RegisterDTO registerDTO;
 
@@ -54,10 +52,6 @@ public abstract class AuthenticationControllerTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-
-        users = new ArrayList<>();
-
         role = Role.builder().id(1L).label("USER").build();
 
         user = User.builder()

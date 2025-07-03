@@ -5,6 +5,7 @@ import com.ynov.todosapp.enums.StatusEnum;
 import com.ynov.todosapp.models.Todo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -27,4 +28,8 @@ public interface TodoRepository extends PagingAndSortingRepository<Todo, Long>, 
     Page<Todo> searchTodos(@Param("status") StatusEnum status,
                            @Param("query") String query,
                            Pageable pageable);
+
+    @Query("DELETE FROM Todo t WHERE t.userAffected.id = :id")
+    @Modifying
+    void deleteByUserAffected(Long id);
 }
