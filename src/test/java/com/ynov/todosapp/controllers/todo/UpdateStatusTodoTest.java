@@ -52,4 +52,6 @@ public class UpdateStatusTodoTest extends TodoControllerTest {
         assertThrows(TaskNotFound.class, () -> controller.updateStatus(1L, todoInputStatusDTO));
     }
 
+
+
 }

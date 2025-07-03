@@ -36,6 +36,26 @@ public class CreateTodoTest extends TodoControllerTest {
         assertEquals(StatusEnum.TODO.getLabel(), todo.getStatus());
     }
 
+    @DisplayName("ÉTANT DONNÉ QUE je fournis un titre valide (non vide, maximum 100 caractères), LORSQUE je crée une tâche, ALORS elle est crian avec une date de création et le statut \"TODO\"")
+    @Test
+    void testCreateTodoWithEmptyDescription() {
+
+        TodoInputDTO inputDTO = TodoInputDTO.builder()
+                .title("Todo Title")
+                .description("")
+                .build();
+
+        ResponseEntity<?> responseEntity = controller.createTodo(inputDTO);
+
+        assertTrue(responseEntity.getStatusCode().is2xxSuccessful());
+
+        TodoDTO todo = (TodoDTO) responseEntity.getBody();
+
+        assertAll(() -> assertNotNull(todo),
+                () -> assertNotNull(todo.getId()),
+                () -> assertEquals("", todo.getDescription()));
+    }
+
     @DisplayName("ÉTANT DONNÉ QUE je fournis un titre et une description valide (maximum 500 caractères), LORSQUE je crée une tâche, ALORS elle est créée avec le titre et la description fournis")
     @Test
     void testCreateTodoWithValidTitleAndValidDescription() {
