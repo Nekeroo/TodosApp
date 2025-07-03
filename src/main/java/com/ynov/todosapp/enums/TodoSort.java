@@ -8,7 +8,8 @@ import java.util.Optional;
 public enum TodoSort {
     TITLE("title"),
     CREATED_DATE("createdDate"),
-    STATUS("status");
+    STATUS("status"),
+    PRIORITY("priority");
 
     private final String label;
 

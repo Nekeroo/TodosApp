@@ -4,6 +4,7 @@ import com.ynov.todosapp.dto.input.TodoInputDTO;
 import com.ynov.todosapp.enums.PriorityEnum;
 import com.ynov.todosapp.enums.StatusEnum;
 import com.ynov.todosapp.enums.TodoSort;
+import com.ynov.todosapp.exceptions.priority.InvalidPriorityException;
 import com.ynov.todosapp.exceptions.todo.InvalidFilterStatus;
 import com.ynov.todosapp.exceptions.todo.InvalidSortCriteria;
 import com.ynov.todosapp.exceptions.todo.TaskNotFound;
@@ -36,7 +37,17 @@ public class TodoService {
         todoRepository.save(todo);
     }
 
-    public Page<Todo> getAllTodos(int page, int size, String query, String statusString, Long userId, Boolean isAssigned, String sortBy, String sortDirection) {
+    public Page<Todo> getAllTodos(
+            int page, int size, String query,
+            String statusString, Long userId,
+            Boolean isAssigned, String sortBy,
+            String sortDirection,
+            String priorityString
+    ) {
+        PriorityEnum priority = priorityString == null || priorityString.isEmpty()
+                ? null
+                : PriorityEnum.fromString(priorityString)
+                .orElseThrow(InvalidPriorityException::new);
         TodoSort todoSort = TodoSort.getSortByString(sortBy)
                 .orElseThrow(InvalidSortCriteria::new);
         StatusEnum status = StatusEnum.getStatusByString(statusString);
@@ -47,7 +58,7 @@ public class TodoService {
             throw new InvalidFilterStatus();
         }
 
-        return todoRepository.searchTodos(status, userId, isAssigned, query.trim(), pageRequest);
+        return todoRepository.searchTodos(status, userId, isAssigned, priority, query.trim(), pageRequest);
     }
 
     public Todo createTodo(TodoInputDTO input) {

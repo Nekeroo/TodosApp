@@ -1,6 +1,7 @@
 package com.ynov.todosapp.repositories;
 
 
+import com.ynov.todosapp.enums.PriorityEnum;
 import com.ynov.todosapp.enums.StatusEnum;
 import com.ynov.todosapp.models.Todo;
 import org.springframework.data.domain.Page;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface TodoRepository extends PagingAndSortingRepository<Todo, Long>, CrudRepository<Todo, Long> {
     @Query("SELECT t FROM Todo t WHERE " +
             "(:status IS NULL OR t.status = :status) AND " +
+            "(:priority IS NULL OR t.priority = :priority) AND " +
             "((:userId IS NULL AND (" +
             "(:isAssigned IS NULL) OR " +
             "(:isAssigned = false AND t.userAffected IS NULL) OR " +
@@ -27,6 +29,7 @@ public interface TodoRepository extends PagingAndSortingRepository<Todo, Long>, 
     Page<Todo> searchTodos(@Param("status") StatusEnum status,
                            @Param("userId") Long userId,
                            @Param("isAssigned") Boolean isAssigned,
+                           @Param("priority") PriorityEnum priority,
                            @Param("query") String query,
                            Pageable pageable);
 
