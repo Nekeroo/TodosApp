@@ -13,4 +13,6 @@ public class TodoInputDTO {
 
     private String description;
 
+    private String priority;
+
 }

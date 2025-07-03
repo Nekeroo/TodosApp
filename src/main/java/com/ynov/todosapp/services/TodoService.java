@@ -1,6 +1,7 @@
 package com.ynov.todosapp.services;
 
 import com.ynov.todosapp.dto.input.TodoInputDTO;
+import com.ynov.todosapp.enums.PriorityEnum;
 import com.ynov.todosapp.enums.StatusEnum;
 import com.ynov.todosapp.enums.TodoSort;
 import com.ynov.todosapp.exceptions.todo.InvalidFilterStatus;
@@ -54,6 +55,7 @@ public class TodoService {
 
         String description = (input.getDescription() == null || input.getDescription().isEmpty()) ? "" : input.getDescription();
         input.setDescription(description);
+
         Todo todo = TodoMapper.todoInputDTOToTodo(input, LocalDate.now(), StatusEnum.TODO);
 
         todoRepository.save(todo);
@@ -71,6 +73,7 @@ public class TodoService {
 
         todo.setTitle(input.getTitle().trim());
         todo.setDescription(input.getDescription().trim());
+        todo.setPriority(PriorityEnum.fromString(input.getPriority()).orElse(PriorityEnum.NORMAL));
         todo = todoRepository.save(todo);
         return todo;
     }

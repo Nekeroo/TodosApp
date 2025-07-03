@@ -1,5 +1,6 @@
 package com.ynov.todosapp.exceptions;
 
+import com.ynov.todosapp.exceptions.priority.InvalidPriorityException;
 import com.ynov.todosapp.exceptions.todo.*;
 import com.ynov.todosapp.exceptions.user.EmailAlreadyTaken;
 import com.ynov.todosapp.exceptions.user.InvalidEmail;
@@ -74,6 +75,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EmailAlreadyTaken.class)
     public ResponseEntity<String> handleEmailAlreadyTaken() {
         return ResponseEntity.badRequest().body("Email already in use");
+    }
+
+    @ExceptionHandler(InvalidPriorityException.class)
+    public ResponseEntity<String> handleUserNotFound() {
+        return ResponseEntity.badRequest().body("Invalid priority. Allowed values: LOW, NORMAL, HIGH, CRITICAL");
     }
 
 }

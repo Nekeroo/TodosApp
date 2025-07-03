@@ -14,9 +14,9 @@ INSERT INTO app_user_role (users_id, role_id) VALUES
     (99, 0),(100, 1), (101, 1);
 
 -- Insert todo item
-INSERT INTO todo (id, created_date, description,  title, status, user_id) VALUES
-    (99, '2025-06-30', 'toto is toto !', 'toto', 'TODO', 99),
-    (100, '2025-06-29', 'tata is tata !', 'tata', 'IN_PROGRESS', 100),
-    (102, '2025-06-28', 'tata is tata !', 'tete', 'IN_PROGRESS', 99),
-    (101, '2025-06-20', 'tata is tata !', 'titi', 'DONE', 100),
-    (103, '2025-06-19', 'New Todo !', 'TODOTODO', 'TODO', null);
+INSERT INTO todo (id, created_date, description,  title, status, user_id, priority) VALUES
+    (99, '2025-06-30', 'toto is toto !', 'toto', 'TODO', 99, 'LOW'),
+    (100, '2025-06-29', 'tata is tata !', 'tata', 'IN_PROGRESS', 100, 'NORMAL'),
+    (102, '2025-06-28', 'tata is tata !', 'tete', 'IN_PROGRESS', 99, 'HIGH'),
+    (101, '2025-06-20', 'tata is tata !', 'titi', 'DONE', 100, 'NORMAL'),
+    (103, '2025-06-19', 'New Todo !', 'TODOTODO', 'TODO', null, 'LOW');

@@ -1,5 +1,7 @@
 package com.ynov.todosapp.utils;
 
+import com.ynov.todosapp.enums.PriorityEnum;
+import com.ynov.todosapp.exceptions.priority.InvalidPriorityException;
 import com.ynov.todosapp.exceptions.todo.DescriptionIsTooLong;
 import com.ynov.todosapp.exceptions.todo.TitleIsRequired;
 import com.ynov.todosapp.exceptions.todo.TitleIsTooLong;
@@ -19,5 +21,12 @@ public class TodoValidator {
         if (description != null && description.trim().length() > 500) {
             throw new DescriptionIsTooLong();
         }
+    }
+
+    public static void validatePriority(String priority) {
+        if (priority != null && !priority.isEmpty() && PriorityEnum.fromString(priority).isEmpty()) {
+            throw new InvalidPriorityException();
+        }
+
     }
 }

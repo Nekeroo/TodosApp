@@ -3,6 +3,7 @@ package com.ynov.todosapp.mapper;
 import com.ynov.todosapp.dto.TodoDTO;
 import com.ynov.todosapp.dto.TodosPaginedDTO;
 import com.ynov.todosapp.dto.input.TodoInputDTO;
+import com.ynov.todosapp.enums.PriorityEnum;
 import com.ynov.todosapp.enums.StatusEnum;
 import com.ynov.todosapp.models.Todo;
 import com.ynov.todosapp.models.User;
@@ -21,6 +22,7 @@ public class TodoMapper {
                 .description(todo.getDescription())
                 .createdDate(todo.getCreatedDate())
                 .status(todo.getStatus().getLabel())
+                .priority(todo.getPriority().getLabel())
                 .userAffected(user == null ? null : user.getId())
                 .build();
     }
@@ -43,6 +45,7 @@ public class TodoMapper {
                 .title(input.getTitle())
                 .description(input.getDescription())
                 .createdDate(createdDate)
+                .priority(PriorityEnum.fromString(input.getPriority()).orElse(PriorityEnum.NORMAL))
                 .status(status)
                 .build();
     }

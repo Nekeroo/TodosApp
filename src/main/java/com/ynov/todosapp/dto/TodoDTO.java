@@ -21,6 +21,8 @@ public class TodoDTO {
 
     private LocalDate createdDate;
 
+    private String priority;
+
     private Long userAffected;
 
     @Override

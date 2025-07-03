@@ -32,6 +32,8 @@ CREATE TABLE todo (
                       status       VARCHAR(255)
                           CHECK (status IN ('TODO','IN_PROGRESS','DONE')),
                       user_id      BIGINT,
+                      priority     VARCHAR(10)
+                          CHECK (priority IN ('LOW','NORMAL','HIGH','DONE', 'MAJOR')),
                       CONSTRAINT fk_todo_user FOREIGN KEY (user_id)
                           REFERENCES app_user(id)
 );

@@ -1,5 +1,6 @@
 package com.ynov.todosapp.models;
 
+import com.ynov.todosapp.enums.PriorityEnum;
 import com.ynov.todosapp.enums.StatusEnum;
 import jakarta.persistence.*;
 import lombok.*;
@@ -29,6 +30,10 @@ public class Todo {
 
     @Column(name = "created_date")
     private LocalDate createdDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "priority")
+    private PriorityEnum priority;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)
