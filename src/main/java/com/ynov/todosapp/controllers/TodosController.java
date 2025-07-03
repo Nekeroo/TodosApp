@@ -1,6 +1,7 @@
 package com.ynov.todosapp.controllers;
 
 import com.ynov.todosapp.dto.TodoAssignInputDTO;
+import com.ynov.todosapp.dto.TodoDTO;
 import com.ynov.todosapp.dto.TodosPaginedDTO;
 import com.ynov.todosapp.dto.input.TodoInputDTO;
 import com.ynov.todosapp.dto.input.TodoInputStatusDTO;
@@ -18,6 +19,8 @@ import com.ynov.todosapp.utils.TodoValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/todos")
@@ -92,7 +95,13 @@ public class TodosController {
         TodoValidator.validatePriority(input.getPriority());
 
         final Todo todo = todoService.updateTodo(id, input);
-        return ResponseEntity.ok().body(TodoMapper.todoToDTO(todo));
+        TodoDTO response = TodoMapper.todoToDTO(todo);
+
+        if (input.getDeadline() != null && input.getDeadline().isBefore(LocalDate.now())) {
+            response.setMessage("Deadline passed");
+        }
+
+        return ResponseEntity.ok().body(response);
     }
 
     @PutMapping("/status/{id}")

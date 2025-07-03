@@ -82,4 +82,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body("Invalid priority. Allowed values: LOW, NORMAL, HIGH, CRITICAL");
     }
 
+    @ExceptionHandler(InvalidDeadlineFormat.class)
+    public ResponseEntity<String> handleInvalidDeadlineFormat() {
+        return ResponseEntity.badRequest().body("Invalid date format");
+    }
+
 }

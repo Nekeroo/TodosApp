@@ -2,6 +2,8 @@ package com.ynov.todosapp.dto.input;
 
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Builder
 @Getter
 @Setter
@@ -14,5 +16,7 @@ public class TodoInputDTO {
     private String description;
 
     private String priority;
+
+    private LocalDate deadline;
 
 }

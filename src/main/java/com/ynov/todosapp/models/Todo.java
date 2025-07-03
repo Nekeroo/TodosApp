@@ -35,6 +35,9 @@ public class Todo {
     @Column(name = "priority")
     private PriorityEnum priority;
 
+    @Column(name = "deadline")
+    private LocalDate deadline;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)
     private User userAffected;

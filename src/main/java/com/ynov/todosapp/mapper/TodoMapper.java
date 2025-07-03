@@ -23,6 +23,7 @@ public class TodoMapper {
                 .createdDate(todo.getCreatedDate())
                 .status(todo.getStatus().getLabel())
                 .priority(todo.getPriority().getLabel())
+                .deadline(todo.getDeadline())
                 .userAffected(user == null ? null : user.getId())
                 .build();
     }
@@ -47,6 +48,7 @@ public class TodoMapper {
                 .createdDate(createdDate)
                 .priority(PriorityEnum.fromString(input.getPriority()).orElse(PriorityEnum.NORMAL))
                 .status(status)
+                .deadline(input.getDeadline())
                 .build();
     }
 }

@@ -82,6 +82,7 @@ public class TodoService {
 
         input.setTitle(input.getTitle().replaceAll("^\\s+|\\s+$", ""));
 
+        todo.setDeadline(input.getDeadline());
         todo.setTitle(input.getTitle().trim());
         todo.setDescription(input.getDescription().trim());
         todo.setPriority(PriorityEnum.fromString(input.getPriority()).orElse(PriorityEnum.NORMAL));

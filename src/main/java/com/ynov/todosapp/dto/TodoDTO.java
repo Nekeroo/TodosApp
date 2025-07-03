@@ -25,6 +25,10 @@ public class TodoDTO {
 
     private Long userAffected;
 
+    private LocalDate deadline;
+
+    private String message;
+
     @Override
     public String toString() {
         return "TodoDTO{" +
