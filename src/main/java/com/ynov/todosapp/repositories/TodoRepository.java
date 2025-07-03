@@ -10,8 +10,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Optional;
-
 public interface TodoRepository extends PagingAndSortingRepository<Todo, Long>, CrudRepository<Todo, Long> {
 //    Page<Todo> findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
 //            String title, String description, Pageable pageable);
@@ -21,8 +19,6 @@ public interface TodoRepository extends PagingAndSortingRepository<Todo, Long>, 
 //            StatusEnum status2, String description,
 //            Pageable pageable
 //    );
-
-    Optional<Todo> findByPublicId(Long publicId);
 
     @Query("SELECT t FROM Todo t WHERE " +
             "(:status IS NULL OR t.status = :status) AND " +

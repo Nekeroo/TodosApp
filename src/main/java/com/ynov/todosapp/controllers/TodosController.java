@@ -106,9 +106,9 @@ public class TodosController {
         }
     }
 
-    @PutMapping("/assign/{publicId}")
-    public ResponseEntity<?> assignUserToTodo(@PathVariable Long publicId, @RequestBody TodoAssignInputDTO input) {
-        final Todo todo = todoService.getTodoByPublicId(publicId);
+    @PutMapping("/assign/{id}")
+    public ResponseEntity<?> assignUserToTodo(@PathVariable Long id, @RequestBody TodoAssignInputDTO input) {
+        final Todo todo = todoService.getTodoById(id);
 
         final User user = userService.getUserByEmail(input.getEmail());
 
@@ -117,5 +117,4 @@ public class TodosController {
 
         return ResponseEntity.ok().body(TodoMapper.todoToDTO(todo));
     }
-
 }

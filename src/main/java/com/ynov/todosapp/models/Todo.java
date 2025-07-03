@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 @Builder
 @Getter
@@ -19,9 +18,6 @@ public class Todo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private long id;
-
-    @Column(name = "public_id")
-    private long publicId;
 
     private String title;
 
