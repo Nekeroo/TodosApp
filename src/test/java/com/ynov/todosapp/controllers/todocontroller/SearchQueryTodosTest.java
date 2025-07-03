@@ -3,56 +3,15 @@ package com.ynov.todosapp.controllers.todocontroller;
 import com.ynov.todosapp.controllers.TodoControllerTest;
 import com.ynov.todosapp.dto.TodoDTO;
 import com.ynov.todosapp.dto.TodosPaginedDTO;
-import com.ynov.todosapp.enums.StatusEnum;
-import com.ynov.todosapp.models.Todo;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
 
 import java.util.HashSet;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
 
 public class SearchQueryTodosTest extends TodoControllerTest {
-
-    private Todo todoWithTitleMatch;
-    private Todo todoWithDescriptionMatch;
-    private Todo todoWithBothMatch;
-
-    @BeforeEach
-    void setUp() {
-        todoWithTitleMatch = Todo.builder()
-                .id(1L)
-                .title("Todo Title toto")
-                .description("Todo Description")
-                .status(StatusEnum.TODO)
-                .createdDate(creationDate)
-                .build();
-
-        todoWithDescriptionMatch = Todo.builder()
-                .id(2L)
-                .title("Todo Title")
-                .description("Todo Description toto")
-                .status(StatusEnum.TODO)
-                .createdDate(creationDate)
-                .build();
-
-        todoWithBothMatch = Todo.builder()
-                .id(3L)
-                .title("Todo Title toto")
-                .description("Todo Description toto")
-                .status(StatusEnum.TODO)
-                .createdDate(creationDate)
-                .build();
-    }
-
 
     @DisplayName("- ÉTANT DONNÉ QUE j'ai des tâches contenant un mot-clé dans le titre, LORSQUE je recherche ce terme, ALORS seules les tâches correspondantes sont retournées")
     @Test
