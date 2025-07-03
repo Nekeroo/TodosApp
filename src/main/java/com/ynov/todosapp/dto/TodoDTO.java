@@ -1,6 +1,5 @@
 package com.ynov.todosapp.dto;
 
-import com.ynov.todosapp.enums.StatusEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +11,7 @@ import java.time.LocalDate;
 @Setter
 public class TodoDTO {
 
-    private Long id;
+    private long id;
 
     private String title;
 
@@ -21,6 +20,8 @@ public class TodoDTO {
     private String status;
 
     private LocalDate createdDate;
+
+    private Long userAffected;
 
     @Override
     public String toString() {

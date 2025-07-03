@@ -3,9 +3,9 @@ package com.ynov.todosapp.services;
 import com.ynov.todosapp.dto.input.TodoInputDTO;
 import com.ynov.todosapp.enums.StatusEnum;
 import com.ynov.todosapp.enums.TodoSort;
-import com.ynov.todosapp.exceptions.InvalidFilterStatus;
-import com.ynov.todosapp.exceptions.InvalidSortCriteria;
-import com.ynov.todosapp.exceptions.TaskNotFound;
+import com.ynov.todosapp.exceptions.todo.InvalidFilterStatus;
+import com.ynov.todosapp.exceptions.todo.InvalidSortCriteria;
+import com.ynov.todosapp.exceptions.todo.TaskNotFound;
 import com.ynov.todosapp.mapper.TodoMapper;
 import com.ynov.todosapp.models.Todo;
 import com.ynov.todosapp.repositories.TodoRepository;
@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -30,7 +31,11 @@ public class TodoService {
                 .orElseThrow(TaskNotFound::new);
     }
 
-    public Page<Todo> getAllTodos(int page, int size, String query, String statusString, String sortBy, String sortDirection) {
+    public void saveTodo(Todo todo) {
+        todoRepository.save(todo);
+    }
+
+    public Page<Todo> getAllTodos(int page, int size, String query, String statusString, Long userId, Boolean isAssigned, String sortBy, String sortDirection) {
         TodoSort todoSort = TodoSort.getSortByString(sortBy)
                 .orElseThrow(InvalidSortCriteria::new);
         StatusEnum status = StatusEnum.getStatusByString(statusString);
@@ -41,7 +46,7 @@ public class TodoService {
             throw new InvalidFilterStatus();
         }
 
-        return todoRepository.searchTodos(status, query.trim(), pageRequest);
+        return todoRepository.searchTodos(status, userId, isAssigned, query.trim(), pageRequest);
     }
 
     public Todo createTodo(TodoInputDTO input) {
@@ -76,5 +81,15 @@ public class TodoService {
         todo.setStatus(status);
         todoRepository.save(todo);
         return todo;
+    }
+
+    @Transactional
+    public void deleteTodoByUserIdAffected(Long id) {
+        todoRepository.deleteByUserAffected(id);
+    }
+
+    @Transactional
+      public void deleteUserAffectedOnTodo(Long id) {
+        todoRepository.clearUserAffectedByUserId(id);
     }
 }

@@ -1,16 +1,19 @@
 package com.ynov.todosapp.controllers;
 
+import com.ynov.todosapp.dto.TodoAssignInputDTO;
 import com.ynov.todosapp.dto.TodosPaginedDTO;
 import com.ynov.todosapp.dto.input.TodoInputDTO;
 import com.ynov.todosapp.dto.input.TodoInputStatusDTO;
 import com.ynov.todosapp.enums.StatusEnum;
-import com.ynov.todosapp.exceptions.InvalidIDFormat;
-import com.ynov.todosapp.exceptions.InvalidPageSize;
-import com.ynov.todosapp.exceptions.InvalidStatus;
-import com.ynov.todosapp.exceptions.TaskNotFound;
+import com.ynov.todosapp.exceptions.todo.InvalidIDFormat;
+import com.ynov.todosapp.exceptions.todo.InvalidPageSize;
+import com.ynov.todosapp.exceptions.todo.InvalidStatus;
+import com.ynov.todosapp.exceptions.todo.TaskNotFound;
 import com.ynov.todosapp.mapper.TodoMapper;
 import com.ynov.todosapp.models.Todo;
+import com.ynov.todosapp.models.User;
 import com.ynov.todosapp.services.TodoService;
+import com.ynov.todosapp.services.UserService;
 import com.ynov.todosapp.utils.TodoValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +24,11 @@ import org.springframework.web.bind.annotation.*;
 public class TodosController {
 
     private final TodoService todoService;
+    private final UserService userService;
 
-    public TodosController(TodoService todoService) {
+    public TodosController(TodoService todoService, UserService userService) {
         this.todoService = todoService;
+        this.userService = userService;
     }
 
     @GetMapping("")
@@ -33,13 +38,15 @@ public class TodosController {
             @RequestParam(defaultValue = "") String query,
             @RequestParam(defaultValue = "") String status,
             @RequestParam(defaultValue = "createdDate") String sortBy,
-            @RequestParam(defaultValue = "desc") String sortDirection
+            @RequestParam(defaultValue = "desc") String sortDirection,
+            @RequestParam(defaultValue = "") Long userId,
+            @RequestParam(defaultValue = "") Boolean isAssigned
     ) {
         if (size <= 0) {
             throw new InvalidPageSize();
         }
 
-        final Page<Todo> todoPage = todoService.getAllTodos(page, size, query, status, sortBy, sortDirection);
+        final Page<Todo> todoPage = todoService.getAllTodos(page, size, query, status, userId, isAssigned, sortBy, sortDirection);
         TodosPaginedDTO todos = TodoMapper.todoPageToDTO(todoPage == null ? Page.empty() : todoPage);
         return ResponseEntity.ok().body(todos);
     }
@@ -55,7 +62,7 @@ public class TodosController {
         }
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<?> createTodo(@RequestBody TodoInputDTO input) {
         TodoValidator.validateTitle(input.getTitle());
         TodoValidator.validateDescription(input.getDescription());
@@ -101,4 +108,16 @@ public class TodosController {
         }
     }
 
+    @PutMapping("/assign/{id}")
+    public ResponseEntity<?> assignUserToTodo(@PathVariable Long id, @RequestBody TodoAssignInputDTO input) {
+
+        final Todo todo = todoService.getTodoById(id);
+
+        final User user = input.getIdUser() == null ? null : userService.getUserById(input.getIdUser());
+
+        todo.setUserAffected(user);
+        todoService.saveTodo(todo);
+
+        return ResponseEntity.ok().body(TodoMapper.todoToDTO(todo));
+    }
 }

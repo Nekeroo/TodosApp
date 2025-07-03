@@ -1,0 +1,23 @@
+meta {
+  name: Register User
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{host}}api/auth/
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnYWV0YW5AZ21haWwuY29tIiwiaWF0IjoxNzUxMzc3NzE0LCJleHAiOjE3NTEzNzg5MjMsInJvbGVzIjpbIlVTRVIiXX0.wk-kx1cxR4CF-L-yJK4Zh6njFgb_oTop4gETnddUVZITIOLN3eWyp2Vhao1SVlZeYtXtUcihwOoCYjLKhcNNag
+}
+
+body:json {
+  {
+    "username" : "Gaetan",
+    "email" : "gaetan@gmail.com",
+    "password" : "toto"
+  }
+}

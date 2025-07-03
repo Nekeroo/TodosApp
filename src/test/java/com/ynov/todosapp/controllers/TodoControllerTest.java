@@ -2,8 +2,8 @@ package com.ynov.todosapp.controllers;
 
 import com.ynov.todosapp.repositories.TodoRepository;
 import com.ynov.todosapp.services.TodoService;
+import com.ynov.todosapp.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -22,15 +22,17 @@ public abstract class TodoControllerTest {
     @Autowired
     protected TodoService service;
 
+    @Autowired
+    protected UserService userService;
+
     protected LocalDate creationDate;
 
     protected TodosController controller;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
         creationDate = LocalDate.now();
 
-        controller = new TodosController(service);
+        controller = new TodosController(service, userService);
     }
 }

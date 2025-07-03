@@ -1,5 +1,10 @@
 package com.ynov.todosapp.exceptions;
 
+import com.ynov.todosapp.exceptions.todo.*;
+import com.ynov.todosapp.exceptions.user.EmailAlreadyTaken;
+import com.ynov.todosapp.exceptions.user.InvalidEmail;
+import com.ynov.todosapp.exceptions.user.NameIsRequired;
+import com.ynov.todosapp.exceptions.user.NameIsTooLong;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -50,4 +55,25 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleInvalidSortCriteria() {
         return ResponseEntity.badRequest().body("Invalid sort criteria");
     }
+
+    @ExceptionHandler(InvalidEmail.class)
+    public ResponseEntity<String> handleInvalidEmail() {
+        return ResponseEntity.badRequest().body("Invalid email format");
+    }
+
+    @ExceptionHandler(NameIsTooLong.class)
+    public ResponseEntity<String> handleNameTooLong() {
+        return ResponseEntity.badRequest().body("Name cannot exceed 50 characters");
+    }
+
+    @ExceptionHandler(NameIsRequired.class)
+    public ResponseEntity<String> handleNameIsRequired() {
+        return ResponseEntity.badRequest().body("Name is required");
+    }
+
+    @ExceptionHandler(EmailAlreadyTaken.class)
+    public ResponseEntity<String> handleEmailAlreadyTaken() {
+        return ResponseEntity.badRequest().body("Email already in use");
+    }
+
 }
