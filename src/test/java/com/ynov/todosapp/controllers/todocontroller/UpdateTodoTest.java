@@ -26,7 +26,7 @@ public class UpdateTodoTest extends TodoControllerTest {
                 .title("Todo title different")
                 .build();
 
-        ResponseEntity<?> response = controller.updateTodo(1L, inputDTO);
+        ResponseEntity<?> response = controller.updateTodo(99L, inputDTO);
 
         assertTrue(response.getStatusCode().is2xxSuccessful());
 
@@ -45,7 +45,7 @@ public class UpdateTodoTest extends TodoControllerTest {
                 .description("Todo description different")
                 .build();
 
-        ResponseEntity<?> response = controller.updateTodo(1L, inputDTO);
+        ResponseEntity<?> response = controller.updateTodo(99L, inputDTO);
 
         assertTrue(response.getStatusCode().is2xxSuccessful());
 
@@ -93,9 +93,7 @@ public class UpdateTodoTest extends TodoControllerTest {
                 .description("Description updated")
                 .build();
 
-        when(service.updateTodo(eq(1L), any(TodoInputDTO.class))).thenThrow(TaskNotFound.class);
-
-        assertThrows(TaskNotFound.class, () -> controller.updateTodo(1L, inputDTO));
+        assertThrows(TaskNotFound.class, () -> controller.updateTodo(999L, inputDTO));
     }
 
     @DisplayName("ÉTANT DONNÉ QUE je tente de modifier une tâche inexistante, LORSQUE j'utilise un ID invalide, ALORS j'obtiens une erreur \"Task not found\"\n")
@@ -107,7 +105,6 @@ public class UpdateTodoTest extends TodoControllerTest {
                 .description("Different description")
                 .build();
 
-        when(service.updateTodo(eq(1L), any(TodoInputDTO.class))).thenThrow(TaskNotFound.class);
         assertThrows(TaskNotFound.class, () -> controller.updateTodo(1L, inputDTO));
     }
 

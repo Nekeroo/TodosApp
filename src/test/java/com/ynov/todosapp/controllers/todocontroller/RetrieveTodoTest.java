@@ -10,6 +10,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -21,14 +23,14 @@ public class RetrieveTodoTest extends TodoControllerTest {
     void testGetOneTodo() {
 
         Todo compareTodo = Todo.builder()
-                .id(1L)
-                .title("Todo Title")
-                .description("Todo Description")
+                .id(99L)
+                .title("toto")
+                .description("toto is toto !")
                 .status(StatusEnum.TODO)
-                .createdDate(creationDate)
+                .createdDate(LocalDate.of(2025, 06, 30))
                 .build();
 
-        ResponseEntity<?> repsonse = controller.retrieveTodoById("1");
+        ResponseEntity<?> repsonse = controller.retrieveTodoById("99");
 
         assertTrue(repsonse.getStatusCode().is2xxSuccessful());
 
@@ -46,7 +48,6 @@ public class RetrieveTodoTest extends TodoControllerTest {
     @Test
     void testGetOneTodoNotFound() {
 
-        when(service.getTodoById(1L)).thenThrow(TaskNotFound.class);
         assertThrows(TaskNotFound.class, () -> controller.retrieveTodoById("1"));
     }
 

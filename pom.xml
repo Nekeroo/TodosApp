@@ -118,6 +118,7 @@
                     <excludes>
                         <exclude>**/models/**</exclude>
                         <exclude>**/dto/**</exclude>
+                        <exclude>**/exceptions/**</exclude>
                     </excludes>
                 </configuration>
                 <executions>

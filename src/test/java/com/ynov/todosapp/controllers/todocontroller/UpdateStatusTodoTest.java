@@ -25,7 +25,7 @@ public class UpdateStatusTodoTest extends TodoControllerTest {
                 .status(StatusEnum.IN_PROGRESS.getLabel())
                 .build();
 
-        ResponseEntity<?> response = controller.updateStatus(1L, todoInputStatusDTO);
+        ResponseEntity<?> response = controller.updateStatus(99L, todoInputStatusDTO);
 
         assertTrue(response.getStatusCode().is2xxSuccessful());
 
@@ -52,7 +52,6 @@ public class UpdateStatusTodoTest extends TodoControllerTest {
                 .status(StatusEnum.DONE.getLabel())
                 .build();
 
-        when(service.updateTodoStatus(eq(1L), any(StatusEnum.class))).thenReturn(null);
         assertThrows(TaskNotFound.class, () -> controller.updateStatus(1L, todoInputStatusDTO));
     }
 

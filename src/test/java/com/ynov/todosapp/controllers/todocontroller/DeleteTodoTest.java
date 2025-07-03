@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
 
 public class DeleteTodoTest extends TodoControllerTest {
 
@@ -20,9 +18,7 @@ public class DeleteTodoTest extends TodoControllerTest {
 
         assertTrue(response.getStatusCode().is2xxSuccessful());
 
-        when(repository.findAll()).thenReturn(savedTodos);
-
-        ResponseEntity<?> responseGet = controller.retrieveTodos(1, 10, "", "", "", "");
+        ResponseEntity<?> responseGet = controller.retrieveTodos(1, 10, "", "", "createdDate", "");
 
         TodosPaginedDTO todos = (TodosPaginedDTO) responseGet.getBody();
 
@@ -32,8 +28,6 @@ public class DeleteTodoTest extends TodoControllerTest {
     @DisplayName("ÉTANT DONNÉ QUE j'ai supprimé une tâche, LORSQUE je tente de la consulter, de la supprimer, de la modifier ou de change son status par son ID, ALORS j'obtiens une erreur \"Task not found\"\n")
     @Test
     void testDeleteOneTodoWithInvalidId() {
-        when(service.getTodoById(anyLong())).thenThrow(TaskNotFound.class);
-
-        assertThrows(TaskNotFound.class, () -> controller.retrieveTodoById("1"));
+        assertThrows(TaskNotFound.class, () -> controller.retrieveTodoById("2"));
     }
 }
