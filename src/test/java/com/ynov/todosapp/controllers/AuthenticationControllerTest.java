@@ -61,7 +61,7 @@ public abstract class AuthenticationControllerTest {
                 .role(List.of(role))
                 .build();
 
-        registerDTO = RegisterDTO.builder().password("toto").username("Dupont Dupont").email("dupont@gmail.com").build();
+        registerDTO = RegisterDTO.builder().password("toto").name("Dupont Dupont").email("dupont@gmail.com").build();
 
         controller = new AuthenticationController(authenticationManager, jwtTokenProvider, userService);
     }

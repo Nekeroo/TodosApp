@@ -42,7 +42,7 @@ public class UserService {
 
         User user = User.builder()
                 .role(List.of())
-                .name(registerDTO.getUsername())
+                .name(registerDTO.getName())
                 .email(registerDTO.getEmail())
                 .role(List.of(role))
                 .password(bCryptPasswordEncoder.encode(registerDTO.getPassword()))

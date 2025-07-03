@@ -38,13 +38,15 @@ public class TodosController {
             @RequestParam(defaultValue = "") String query,
             @RequestParam(defaultValue = "") String status,
             @RequestParam(defaultValue = "createdDate") String sortBy,
-            @RequestParam(defaultValue = "desc") String sortDirection
+            @RequestParam(defaultValue = "desc") String sortDirection,
+            @RequestParam(defaultValue = "") Long userId,
+            @RequestParam(defaultValue = "") Boolean isAssigned
     ) {
         if (size <= 0) {
             throw new InvalidPageSize();
         }
 
-        final Page<Todo> todoPage = todoService.getAllTodos(page, size, query, status, sortBy, sortDirection);
+        final Page<Todo> todoPage = todoService.getAllTodos(page, size, query, status, userId, isAssigned, sortBy, sortDirection);
         TodosPaginedDTO todos = TodoMapper.todoPageToDTO(todoPage == null ? Page.empty() : todoPage);
         return ResponseEntity.ok().body(todos);
     }

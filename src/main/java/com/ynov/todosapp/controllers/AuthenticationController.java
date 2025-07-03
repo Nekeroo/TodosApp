@@ -67,7 +67,7 @@ public class AuthenticationController {
             throw new EmailAlreadyTaken();
         }
 
-        UserValidator.validateUsername(registerDTO.getUsername());
+        UserValidator.validateUsername(registerDTO.getName());
         UserValidator.validateEmail(registerDTO.getEmail());
 
         User user = userService.registerUser(registerDTO);

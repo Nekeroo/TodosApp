@@ -12,20 +12,20 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 public interface TodoRepository extends PagingAndSortingRepository<Todo, Long>, CrudRepository<Todo, Long> {
-//    Page<Todo> findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
-//            String title, String description, Pageable pageable);
-//
-//    Page<Todo> findByStatusAndTitleContainingIgnoreCaseOrStatusAndDescriptionContainingIgnoreCase(
-//            StatusEnum status1, String title,
-//            StatusEnum status2, String description,
-//            Pageable pageable
-//    );
-
     @Query("SELECT t FROM Todo t WHERE " +
             "(:status IS NULL OR t.status = :status) AND " +
+            "((:userId IS NULL AND (" +
+            "(:isAssigned IS NULL) OR " +
+            "(:isAssigned = false AND t.userAffected IS NULL) OR " +
+            "(:isAssigned = true AND t.userAffected IS NOT NULL)" +
+            ")) OR " +
+            "(:userId IS NOT NULL AND t.userAffected.id = :userId)) AND " +
             "(:query IS NULL OR LOWER(t.title) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
-            "LOWER(t.description) LIKE LOWER(CONCAT('%', :query, '%')))")
+            "LOWER(t.description) LIKE LOWER(CONCAT('%', :query, '%')))"
+    )
     Page<Todo> searchTodos(@Param("status") StatusEnum status,
+                           @Param("userId") Long userId,
+                           @Param("isAssigned") Boolean isAssigned,
                            @Param("query") String query,
                            Pageable pageable);
 

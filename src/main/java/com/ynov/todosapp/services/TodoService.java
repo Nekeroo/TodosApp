@@ -31,11 +31,11 @@ public class TodoService {
                 .orElseThrow(TaskNotFound::new);
     }
 
-    public Todo saveTodo(Todo todo) {
-        return todoRepository.save(todo);
+    public void saveTodo(Todo todo) {
+        todoRepository.save(todo);
     }
 
-    public Page<Todo> getAllTodos(int page, int size, String query, String statusString, String sortBy, String sortDirection) {
+    public Page<Todo> getAllTodos(int page, int size, String query, String statusString, Long userId, Boolean isAssigned, String sortBy, String sortDirection) {
         TodoSort todoSort = TodoSort.getSortByString(sortBy)
                 .orElseThrow(InvalidSortCriteria::new);
         StatusEnum status = StatusEnum.getStatusByString(statusString);
@@ -46,7 +46,7 @@ public class TodoService {
             throw new InvalidFilterStatus();
         }
 
-        return todoRepository.searchTodos(status, query.trim(), pageRequest);
+        return todoRepository.searchTodos(status, userId, isAssigned, query.trim(), pageRequest);
     }
 
     public Todo createTodo(TodoInputDTO input) {

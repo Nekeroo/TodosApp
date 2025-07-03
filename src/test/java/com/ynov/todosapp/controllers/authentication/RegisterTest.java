@@ -33,7 +33,7 @@ public class RegisterTest extends AuthenticationControllerTest {
     @Test
     void testRegisterOneUserWithEmailAlreadyTaken() {
         RegisterDTO registerDTO = RegisterDTO.builder()
-                .username("testUser")
+                .name("testUser")
                 .email("mathieugrattard1@gmail.com")
                 .password("validPassword123")
                 .build();
@@ -45,7 +45,7 @@ public class RegisterTest extends AuthenticationControllerTest {
     @Test
     void testRegisterOneUserWithInvalidEmailFormat() {
         RegisterDTO registerDTOInvalidEmailFormat = RegisterDTO.builder()
-                .username("testUser")
+                .name("testUser")
                 .email("mgmail.com")
                 .password("validPassword123")
                 .build();
@@ -57,7 +57,7 @@ public class RegisterTest extends AuthenticationControllerTest {
     @Test
     void testRegisterOneUserWithInvalidName() {
         RegisterDTO registerDTO1WithInvalidName = RegisterDTO.builder()
-                .username("")
+                .name("")
                 .email("H9F0A@example.com")
                 .password("validPassword123")
                 .build();
@@ -66,7 +66,7 @@ public class RegisterTest extends AuthenticationControllerTest {
         assertThrows(NameIsRequired.class, () -> controller.registerUser(registerDTO1WithInvalidName));
 
         RegisterDTO registerDTO2WithInvalidName = RegisterDTO.builder()
-                .username("   ")
+                .name("   ")
                 .email("H9F0A@example.com")
                 .password("validPassword123")
                 .build();
@@ -78,7 +78,7 @@ public class RegisterTest extends AuthenticationControllerTest {
     @Test
     void testRegisterOneUserWithNameTooLong() {
         RegisterDTO registerDTO01WithNameTooLong = RegisterDTO.builder()
-                .username("e".repeat(51))
+                .name("e".repeat(51))
                 .email("H9F0A@example.com")
                 .password("validPassword123")
                 .build();
