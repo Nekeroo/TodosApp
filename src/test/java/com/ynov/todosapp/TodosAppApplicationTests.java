@@ -7,7 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 class TodosAppApplicationTests {
 
     @Test
-    void contextLoads() {
+    void applicationStarts() {
+        TodosAppApplication.main(new String[] {});
     }
 
 }

@@ -29,7 +29,7 @@ public class JwtTokenProvider {
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
 
-        long expMillis = nowMillis + ( 3600 * 336 ); // Durée d'expiration du token : 2 semaines
+        long expMillis = nowMillis + (3600 * 336); // Durée d'expiration du token : 2 semaines
         Date exp = new Date(expMillis);
 
         return Jwts.builder()
@@ -45,7 +45,7 @@ public class JwtTokenProvider {
         try {
             Jwts.parserBuilder().setSigningKey(jwtSecretKey).build().parseClaimsJws(authToken);
             return true;
-        } catch (SecurityException ex) {
+        } catch (SignatureException | SecurityException ex) {
             logger.error("Invalid JWT signature");
         } catch (MalformedJwtException ex) {
             logger.error("Invalid JWT token");

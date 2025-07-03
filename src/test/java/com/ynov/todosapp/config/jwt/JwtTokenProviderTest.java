@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-
 @SpringBootTest
 @ActiveProfiles("test")
 class JwtTokenProviderTest {
@@ -59,5 +58,58 @@ class JwtTokenProviderTest {
         when(request.getHeader("Authorization")).thenReturn(null);
         String token = jwtTokenProvider.getJwtFromRequest(request);
         assertNull(token);
+    }
+
+    @Test
+    @DisplayName("validateToken returns false for token with invalid signature (SecurityException)")
+    void testValidateTokenInvalidSignature() {
+        JwtTokenProvider otherProvider = new JwtTokenProvider("NzYzMjM2NTMxNzYxNDQ1MjA2NTgxNzI1Njk0MTUzNjU1NjU5Njk2ODcyNjMzNzU1MTYxNjE3OTUzNTM3NzU3oeoeoeooeoe");
+        String token = otherProvider.generateToken("user", List.of("USER"));
+        assertFalse(jwtTokenProvider.validateToken(token));
+    }
+
+    @Test
+    @DisplayName("validateToken returns false for malformed token (MalformedJwtException)")
+    void testValidateTokenMalformed() {
+        // Not a JWT format
+        String malformedToken = "thisisnotajwt";
+        assertFalse(jwtTokenProvider.validateToken(malformedToken));
+    }
+
+    @Test
+    @DisplayName("validateToken returns false for expired token (ExpiredJwtException)")
+    void testValidateTokenExpired() throws InterruptedException {
+        // Generate a token with a very short expiration
+        JwtTokenProvider shortLivedProvider = new JwtTokenProvider(secret) {
+            @Override
+            public String generateToken(String username, List<String> roles) {
+                long now = System.currentTimeMillis();
+                return io.jsonwebtoken.Jwts.builder()
+                        .setSubject(username)
+                        .claim("roles", roles)
+                        .setIssuedAt(new java.util.Date(now))
+                        .setExpiration(new java.util.Date(now + 500)) // 0.5 second
+                        .signWith(io.jsonwebtoken.security.Keys.hmacShaKeyFor(secret.getBytes()))
+                        .compact();
+            }
+        };
+        String token = shortLivedProvider.generateToken("user", List.of("USER"));
+        Thread.sleep(600); // Wait for expiration
+        assertFalse(jwtTokenProvider.validateToken(token));
+    }
+
+    @Test
+    @DisplayName("validateToken returns false for unsupported token (UnsupportedJwtException)")
+    void testValidateTokenUnsupported() {
+        // Create a token with an unsupported format (e.g., plain string with dots)
+        String unsupportedToken = "header.payload.signature.extra"; // Too many segments
+        assertFalse(jwtTokenProvider.validateToken(unsupportedToken));
+    }
+
+    @Test
+    @DisplayName("validateToken returns false for empty claims (IllegalArgumentException)")
+    void testValidateTokenEmptyClaims() {
+        assertFalse(jwtTokenProvider.validateToken(""));
+        assertFalse(jwtTokenProvider.validateToken(null));
     }
 }
