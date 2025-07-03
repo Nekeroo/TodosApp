@@ -39,7 +39,7 @@ Cela installera les dépendances, lancera les tests, génèrera un rapport de te
 
 ## Lancement
 
-Afin de lancer l'application, nous recomandons d'utiliser mvn via la commande suivante :
+Afin de lancer l'application, nous recommandons d'utiliser mvn via la commande suivante :
 
 ```bash
 mvn spring-boot:run
