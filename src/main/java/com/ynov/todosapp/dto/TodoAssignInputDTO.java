@@ -9,6 +9,8 @@ import lombok.Setter;
 @Setter
 public class TodoAssignInputDTO {
 
-    private String email;
+    private Long idUser;
+
+    private boolean shouldAssign;
 
 }

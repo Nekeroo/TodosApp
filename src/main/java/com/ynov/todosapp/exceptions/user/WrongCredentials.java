@@ -1,7 +1,7 @@
 package com.ynov.todosapp.exceptions.user;
 
-public class WrongCredentiels extends RuntimeException {
-    public WrongCredentiels() {
+public class WrongCredentials extends RuntimeException {
+    public WrongCredentials() {
         super("Email or password incorrect");
     }
 }

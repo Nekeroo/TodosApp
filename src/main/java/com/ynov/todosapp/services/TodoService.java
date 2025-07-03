@@ -87,4 +87,9 @@ public class TodoService {
     public void deleteTodoByUserIdAffected(Long id) {
         todoRepository.deleteByUserAffected(id);
     }
+
+    @Transactional
+      public void deleteUserAffectedOnTodo(Long id) {
+        todoRepository.clearUserAffectedByUserId(id);
+    }
 }

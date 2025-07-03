@@ -33,6 +33,11 @@ public class UserService {
                 .orElseThrow(UserNotFound::new);
     }
 
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(UserNotFound::new);
+    }
+
     public boolean isUserExist(String email) {
         return userRepository.getUserByEmail(email).isPresent();
     }

@@ -27,9 +27,9 @@ public class SortTodoTest extends TodoControllerTest {
 
         List<TodoDTO> todosRetrieved = todosPaginedDTO.getTodos().stream().toList();
 
-        assertEquals(4, todosRetrieved.size());
-        assertEquals("titi", todosRetrieved.get(0).getTitle());
-        assertEquals("tete", todosRetrieved.get(1).getTitle());
+        assertEquals(5, todosRetrieved.size());
+        assertEquals("TODOTODO", todosRetrieved.get(0).getTitle());
+        assertEquals("titi", todosRetrieved.get(1).getTitle());
         
         assertTrue(todosRetrieved.get(0).getCreatedDate().isBefore(todosRetrieved.get(1).getCreatedDate()));
     }
@@ -48,7 +48,7 @@ public class SortTodoTest extends TodoControllerTest {
 
         System.out.println(todosRetrieved);
 
-        assertEquals(4, todosRetrieved.size());
+        assertEquals(5, todosRetrieved.size());
         assertEquals("toto", todosRetrieved.get(0).getTitle());
         assertEquals("tata", todosRetrieved.get(1).getTitle());
 
@@ -67,9 +67,9 @@ public class SortTodoTest extends TodoControllerTest {
 
         List<TodoDTO> todosRetrieved = todosPaginedDTO.getTodos().stream().toList();
 
-        assertEquals(4, todosRetrieved.size());
-        assertEquals("tata", todosRetrieved.get(0).getTitle());
-        assertEquals("tete", todosRetrieved.get(1).getTitle());
+        assertEquals(5, todosRetrieved.size());
+        assertEquals("TODOTODO", todosRetrieved.get(0).getTitle());
+        assertEquals("tata", todosRetrieved.get(1).getTitle());
 
         assertTrue(todosRetrieved.get(0).getTitle().compareTo(todosRetrieved.get(1).getTitle()) < 0);
     }
@@ -86,7 +86,7 @@ public class SortTodoTest extends TodoControllerTest {
 
         List<TodoDTO> todosRetrieved = todosPaginedDTO.getTodos().stream().toList();
 
-        assertEquals(4, todosRetrieved.size());
+        assertEquals(5, todosRetrieved.size());
         assertEquals("toto", todosRetrieved.get(0).getTitle());
         assertEquals("titi", todosRetrieved.get(1).getTitle());
         
@@ -105,7 +105,7 @@ public class SortTodoTest extends TodoControllerTest {
 
         List<TodoDTO> todosRetrieved = todosPaginedDTO.getTodos().stream().toList();
 
-        assertEquals(4, todosRetrieved.size());
+        assertEquals(5, todosRetrieved.size());
         assertEquals(StatusEnum.DONE.getLabel(), todosRetrieved.get(0).getStatus());
         assertEquals(StatusEnum.IN_PROGRESS.getLabel(), todosRetrieved.get(1).getStatus());
         assertEquals(StatusEnum.IN_PROGRESS.getLabel(), todosRetrieved.get(2).getStatus());
@@ -124,7 +124,7 @@ public class SortTodoTest extends TodoControllerTest {
 
         List<TodoDTO> todosRetrieved = todosPaginedDTO.getTodos().stream().toList();
 
-        assertEquals(4, todosRetrieved.size());
+        assertEquals(5, todosRetrieved.size());
         assertEquals("toto", todosRetrieved.get(0).getTitle());
         assertEquals("tata", todosRetrieved.get(1).getTitle());
         

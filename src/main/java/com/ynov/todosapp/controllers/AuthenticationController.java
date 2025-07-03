@@ -6,7 +6,7 @@ import com.ynov.todosapp.dto.UserPaginedDTO;
 import com.ynov.todosapp.dto.input.LoginDTO;
 import com.ynov.todosapp.dto.input.RegisterDTO;
 import com.ynov.todosapp.exceptions.user.EmailAlreadyTaken;
-import com.ynov.todosapp.exceptions.user.WrongCredentiels;
+import com.ynov.todosapp.exceptions.user.WrongCredentials;
 import com.ynov.todosapp.mapper.RoleMapper;
 import com.ynov.todosapp.mapper.UserMapper;
 import com.ynov.todosapp.models.Role;
@@ -56,7 +56,7 @@ public class AuthenticationController {
             UserDTO userDTO = UserMapper.toDTO(user, token);
             return ResponseEntity.ok().body(userDTO);
         } catch (AuthenticationException e) {
-            throw new WrongCredentiels();
+            throw new WrongCredentials();
         }
     }
 

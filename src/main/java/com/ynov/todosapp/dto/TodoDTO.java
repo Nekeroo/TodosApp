@@ -21,6 +21,8 @@ public class TodoDTO {
 
     private LocalDate createdDate;
 
+    private Long userAffected;
+
     @Override
     public String toString() {
         return "TodoDTO{" +

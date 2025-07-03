@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface TodoRepository extends PagingAndSortingRepository<Todo, Long>, CrudRepository<Todo, Long> {
     @Query("SELECT t FROM Todo t WHERE " +
@@ -32,4 +33,14 @@ public interface TodoRepository extends PagingAndSortingRepository<Todo, Long>, 
     @Query("DELETE FROM Todo t WHERE t.userAffected.id = :id")
     @Modifying
     void deleteByUserAffected(Long id);
+
+
+    @Modifying(clearAutomatically = true)
+    @Transactional
+    @Query("""
+        UPDATE Todo t
+           SET t.userAffected = NULL
+         WHERE t.userAffected.id = :userId
+    """)
+    void clearUserAffectedByUserId(@Param("userId") Long userId);
 }

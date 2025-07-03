@@ -5,6 +5,7 @@ import com.ynov.todosapp.dto.TodosPaginedDTO;
 import com.ynov.todosapp.dto.input.TodoInputDTO;
 import com.ynov.todosapp.enums.StatusEnum;
 import com.ynov.todosapp.models.Todo;
+import com.ynov.todosapp.models.User;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
@@ -13,12 +14,14 @@ import java.util.List;
 
 public class TodoMapper {
     public static TodoDTO todoToDTO(Todo todo) {
+        User user = todo.getUserAffected();
         return TodoDTO.builder()
                 .id(todo.getId())
                 .title(todo.getTitle())
                 .description(todo.getDescription())
                 .createdDate(todo.getCreatedDate())
                 .status(todo.getStatus().getLabel())
+                .userAffected(user == null ? null : user.getId())
                 .build();
     }
 

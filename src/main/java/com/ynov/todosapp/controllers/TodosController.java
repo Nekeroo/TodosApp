@@ -110,9 +110,10 @@ public class TodosController {
 
     @PutMapping("/assign/{id}")
     public ResponseEntity<?> assignUserToTodo(@PathVariable Long id, @RequestBody TodoAssignInputDTO input) {
+
         final Todo todo = todoService.getTodoById(id);
 
-        final User user = userService.getUserByEmail(input.getEmail());
+        final User user = input.getIdUser() == null ? null : userService.getUserById(input.getIdUser());
 
         todo.setUserAffected(user);
         todoService.saveTodo(todo);
